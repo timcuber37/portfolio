@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model AnalyticsEvent {
+  id        Int      @id @default(autoincrement())
+  type      String
+  country   String?
+  city      String?
+  region    String?
+  ip        String?
+  userAgent String?
+  page      String?
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  tech        String
+  bullets     String
+  screenshots String   @default("[]")
+  startDate   String
+  endDate     String?
+  githubUrl   String?
+  liveUrl     String?
+  visible     Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Experience {
+  id        Int     @id @default(autoincrement())
+  title     String
+  company   String
+  location  String
+  startDate String
+  endDate   String?
+  bullets   String
+  type      String
+  visible   Boolean @default(true)
+  order     Int     @default(0)
+}
+
+model Skill {
+  id       Int     @id @default(autoincrement())
+  name     String
+  category String
+  visible  Boolean @default(true)
+  order    Int     @default(0)
+}
+
+model SiteSetting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

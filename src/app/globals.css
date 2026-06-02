@@ -1,26 +1,153 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-border: #e4e4e7;
+  --color-text: #18181b;
+  --color-muted: #71717a;
+  --color-accent: #2563eb;
+
+  /* Rubik's cube palette (vibrant fills) */
+  --cube-red: #ff3b3b;
+  --cube-orange: #ff8c00;
+  --cube-yellow: #ffd500;
+  --cube-green: #00c853;
+  --cube-blue: #2979ff;
+  --cube-white: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f7f8fa;
+  color: #18181b;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* Faint grid backdrop, like a cube's lattice */
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+::selection {
+  background-color: rgba(37, 99, 235, 0.18);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #eceef1;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    var(--cube-red),
+    var(--cube-orange),
+    var(--cube-yellow),
+    var(--cube-green),
+    var(--cube-blue)
+  );
+  border-radius: 5px;
+  border: 2px solid #eceef1;
+}
+
+/* ---- Utilities ---- */
+
+.cube-gradient-text {
+  /* Slightly deepened stops so the text stays legible on white */
+  background-image: linear-gradient(
+    100deg,
+    #e11d2a,
+    #ea580c,
+    #15a34a,
+    #2563eb
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.cube-ring {
+  background: conic-gradient(
+    from 0deg,
+    var(--cube-red),
+    var(--cube-orange),
+    var(--cube-yellow),
+    var(--cube-green),
+    var(--cube-blue),
+    var(--cube-red)
+  );
+  animation: spin-slow 12s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.cube-3d {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.nav-underline {
+  position: relative;
+}
+.nav-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  background-image: linear-gradient(90deg, var(--cube-blue), var(--cube-green));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.nav-underline:hover::after {
+  transform: scaleX(1);
+}
+
+/* ---- Keyframes ---- */
+
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-3d {
+  from {
+    transform: rotateX(-24deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-24deg) rotateY(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cube-gradient-text,
+  .cube-ring,
+  .cube-3d {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
