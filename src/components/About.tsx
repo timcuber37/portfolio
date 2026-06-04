@@ -14,7 +14,9 @@ export default function About({ settings }: { settings: Record<string, string> }
           transition={{ duration: 0.5 }}
         >
           <SectionLabel color={ink.red}>About</SectionLabel>
-          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-8">A little about me</h2>
+          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-8">
+            {settings.aboutHeading ?? 'A little about me'}
+          </h2>
         </motion.div>
 
         <motion.div
@@ -29,10 +31,12 @@ export default function About({ settings }: { settings: Record<string, string> }
               "I'm a full stack software engineer and Computer Science graduate student at Southern Connecticut State University. I enjoy building real-world applications that solve meaningful problems."}
           </p>
           <p>
-            My experience spans cloud infrastructure, AI-powered tools, and high-performance graphics — from deploying containerized apps on Fly.io and AWS to engineering GLSL shaders for real-time black hole simulations.
+            {settings.aboutPara2 ??
+              'My experience spans cloud infrastructure, AI-powered tools, and high-performance graphics — from deploying containerized apps on Fly.io and AWS to engineering GLSL shaders for real-time black hole simulations.'}
           </p>
           <p>
-            Outside of code, I compete in Rubik's Cube events and am ranked in the top 100 in the United States for 3×3 average time through the World Cube Association.
+            {settings.aboutPara3 ??
+              "Outside of code, I compete in Rubik's Cube events and am ranked in the top 100 in the United States for 3×3 average time through the World Cube Association."}
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <a

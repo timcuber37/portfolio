@@ -29,11 +29,11 @@ export default async function Home() {
       <main>
         <Hero settings={settings} />
         <About settings={settings} />
-        <Projects projects={projects} />
-        <Skills skills={skills} />
-        <Experience experience={experience} />
-        <Beyond />
-        <Contact />
+        <Projects projects={projects} settings={settings} />
+        <Skills skills={skills} settings={settings} />
+        <Experience experience={experience} settings={settings} />
+        <Beyond settings={settings} />
+        <Contact settings={settings} />
       </main>
       <Footer settings={settings} />
     </>

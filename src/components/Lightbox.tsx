@@ -5,6 +5,7 @@ import { useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useBodyScrollLock } from '@/lib/useBodyScrollLock'
 
 export default function Lightbox({
   images,
@@ -29,6 +30,8 @@ export default function Lightbox({
     [index, images.length, onNavigate]
   )
 
+  useBodyScrollLock(open)
+
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -37,13 +40,7 @@ export default function Lightbox({
       else if (e.key === 'ArrowLeft') go(-1)
     }
     window.addEventListener('keydown', onKey)
-    // Prevent background scroll while the lightbox is open.
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prevOverflow
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [open, go, onClose])
 
   if (typeof document === 'undefined') return null

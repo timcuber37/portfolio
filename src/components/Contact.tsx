@@ -6,7 +6,7 @@ import { Send, CheckCircle } from 'lucide-react'
 import { SectionLabel } from './About'
 import { cube, ink } from '@/lib/theme'
 
-export default function Contact() {
+export default function Contact({ settings }: { settings: Record<string, string> }) {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
@@ -40,9 +40,12 @@ export default function Contact() {
           transition={{ duration: 0.5 }}
         >
           <SectionLabel color={ink.amber}>Contact</SectionLabel>
-          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-3">Get in touch</h2>
+          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-3">
+            {settings.contactHeading ?? 'Get in touch'}
+          </h2>
           <p className="text-zinc-600 text-sm mb-10 max-w-md">
-            Have a question, opportunity, or just want to say hello? Drop me a message and I&apos;ll get back to you.
+            {settings.contactIntro ??
+              'Have a question, opportunity, or just want to say hello? Drop me a message and I’ll get back to you.'}
           </p>
         </motion.div>
 

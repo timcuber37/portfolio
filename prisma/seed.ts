@@ -22,12 +22,48 @@ async function main() {
     {
       key: 'bio',
       value:
-        "I'm a full stack software engineer and Computer Science graduate student at Southern Connecticut State University. I build real-world applications spanning AI, cloud infrastructure, and high-performance graphics — from NLP-powered query tools to real-time black hole simulations.",
+        "I'm a full-stack software engineer and Computer Science graduate student at Southern Connecticut State University. I build production-grade applications across AI, distributed systems, cloud, and high-performance graphics — from an AI tool that translates natural language into SQL over millions of rows, to an event-driven CQRS platform on Kafka and Cassandra, to real-time GPU black hole simulations. I care about clean architecture, scalable data systems, and shipping software that works.",
     },
     { key: 'email', value: 'timcuber37@gmail.com' },
     { key: 'github', value: 'https://github.com/timcuber37' },
     { key: 'linkedin', value: 'https://linkedin.com/in/timyang37' },
     { key: 'phone', value: '475-238-2704' },
+    // Editable section copy (also editable via the admin Content panel).
+    { key: 'heroRoles', value: "Full Stack Software Engineer\nCS Graduate Student\nRubik's Cube Competitor" },
+    { key: 'aboutHeading', value: 'A little about me' },
+    {
+      key: 'aboutPara2',
+      value:
+        'My experience spans cloud infrastructure, AI-powered tools, and high-performance graphics — from deploying containerized apps on Fly.io and AWS to engineering GLSL shaders for real-time black hole simulations.',
+    },
+    {
+      key: 'aboutPara3',
+      value:
+        "Outside of code, I compete in Rubik's Cube events and am ranked in the top 100 in the United States for 3×3 average time through the World Cube Association.",
+    },
+    { key: 'projectsHeading', value: "Things I've built" },
+    { key: 'skillsHeading', value: 'Technologies I work with' },
+    { key: 'experienceHeading', value: 'Work & Education' },
+    { key: 'beyondHeading', value: 'Life outside the editor' },
+    { key: 'beyondIntro', value: "What I get up to when I'm not building software." },
+    {
+      key: 'beyondCubingDesc',
+      value:
+        'Ranked top 100 in the United States for 3×3 average through the World Cube Association. I compete at official events and share solves and tutorials on YouTube.',
+    },
+    { key: 'beyondKoreanTitle', value: 'Korean Club Co-Founder' },
+    {
+      key: 'beyondKoreanDesc',
+      value:
+        'Co-founded and serve as Vice President of the SCSU Korean Club, organizing cultural events and building a welcoming community on campus.',
+    },
+    { key: 'youtubeUrl', value: 'https://www.youtube.com/@timcuber37' },
+    { key: 'wcaUrl', value: 'https://www.worldcubeassociation.org/persons/2019YANT03' },
+    { key: 'contactHeading', value: 'Get in touch' },
+    {
+      key: 'contactIntro',
+      value: "Have a question, opportunity, or just want to say hello? Drop me a message and I'll get back to you.",
+    },
   ]
   for (const s of settings) {
     await prisma.siteSetting.create({ data: s })
@@ -37,15 +73,30 @@ async function main() {
   await prisma.project.createMany({
     data: [
       {
-        title: 'WCA Statbot',
+        title: 'SpeedCubeMuse',
         description:
           'A full-stack AI web application that translates natural language questions into SQL queries against a 6.3M+ row WCA competition database, reducing the barrier to data access for non-technical users.',
-        tech: JSON.stringify(['Python', 'Flask', 'Claude', 'TiDB Serverless', 'Supabase', 'Docker', 'Fly.io']),
+        tech: JSON.stringify([
+          'Python',
+          'Flask',
+          'Claude',
+          'TiDB Serverless',
+          'Supabase',
+          'Docker',
+          'Fly.io',
+          'Voyage AI',
+          'pgvector',
+          'GitHub Actions',
+          'pytest',
+          'Discord',
+        ]),
         bullets: JSON.stringify([
-          'Built a full-stack AI web app translating natural language to SQL against a 6.3M+ row WCA competition database.',
-          'Engineered hybrid cloud database architecture using TiDB Serverless (1.68GB) and Supabase for auth, achieving zero-cost hosting.',
-          'Implemented Google OAuth via Supabase Auth with per-request JWT-authenticated DB clients satisfying Row Level Security.',
-          'Containerized and deployed using Docker and Gunicorn on Fly.io with auto-stop/start machines and HTTPS enforcement.',
+          'Built a natural language query interface for 6.3M+ WCA competition records by integrating Claude AI to translate plain-English questions into validated, read-only SQL, enabling non-technical users to query a complex relational database without writing code',
+          'Developed a Retrieval-Augmented Generation chatbot for WCA regulation lookups by implementing a semantic search pipeline with Voyage AI embeddings, pgvector similarity search, and a reranker over 697 regulations, producing grounded answers with direct citations to official documentation',
+          "Reduced manual database maintenance from a 4-step process to a single command by writing an automated pipeline that fetches the WCA export API, streams and parses multi-GB TSV/SQL zips, bulk-loads all tables into TiDB Serverless, and patches the live site's stat cards and export date automatically",
+          'Hardened the application against injection and abuse by implementing a strict Content-Security-Policy, per-endpoint rate limiting with authenticated-user exemptions, and SQL query validation that rejects any non-SELECT statements before execution',
+          'Deployed a multi-process Docker container serving both the web app and Discord bot by configuring supervisord with per-process log routing, integrated into a GitHub Actions CI/CD pipeline that automatically deploys to Fly.io on every push to main',
+          'Validated database integrity after each data load by building an 89-test pytest suite covering row count minimums, referential integrity, WCA ID format correctness, cross-table consistency, and known world record spot-checks against live TiDB',
         ]),
         screenshots: JSON.stringify([
           '/screenshots/scm1.png',
@@ -55,7 +106,7 @@ async function main() {
         startDate: 'Jan 2026',
         endDate: null,
         githubUrl: null,
-        liveUrl: 'https://wca-statbot.fly.dev/',
+        liveUrl: 'https://speedcubemuse.fly.dev/',
         visible: true,
         order: 0,
       },
@@ -80,20 +131,18 @@ async function main() {
         githubUrl: 'https://github.com/Adrian1131/blackhole-sim-v2',
         liveUrl: null,
         visible: true,
-        order: 2,
+        order: 3,
       },
       {
         title: 'Poke-Collect',
         description:
-          'A Pokémon TCG collection manager built on a CQRS architecture with a distributed Python/Flask backend, RAG chatbot for natural-language card Q&A, real-time TCGPlayer price enrichment, and event-driven Kafka consumers projecting into denormalized Cassandra read models.',
-        tech: JSON.stringify(['Python', 'Flask', 'MySQL', 'Cassandra', 'PostgreSQL', 'Kafka', 'Ollama']),
+          'A Pokémon TCG collection manager built on a CQRS architecture with a distributed Python/Flask backend, real-time TCGPlayer price enrichment, and event-driven Kafka consumers projecting into denormalized Cassandra read models.',
+        tech: JSON.stringify(['Python', 'Flask', 'MySQL', 'Cassandra', 'PostgreSQL', 'Kafka']),
         bullets: JSON.stringify([
           'Built a Pokémon TCG collection manager on a CQRS architecture using Python/Flask, MySQL (writes), Apache Cassandra (read models), PostgreSQL + pgvector (vector search), and Apache Kafka as the event bus.',
-          'Implemented a RAG chatbot over 10,000+ cards using sentence-transformers embeddings, pgvector cosine-similarity retrieval, and a locally-hosted Ollama (phi3:mini) LLM for natural-language card Q&A.',
           'Engineered a rate-limit-aware sync service pulling 146 Pokémon TCG sets from the PokéWallet REST API, writing idempotent upserts to Cassandra and PostgreSQL within a 100 req/hour budget.',
           'Built event-driven Kafka consumers projecting write-side events into denormalized Cassandra read models, enabling JOIN-free collection queries across 4 cooperating distributed Python processes.',
           'Designed lazy TCGPlayer price enrichment that fetches live prices on collection add and caches them via COALESCE upserts, surfacing per-card and total portfolio value in the Jinja2 UI.',
-          'Hardened a public Ollama chat endpoint against prompt injection with route-level input caps, structured delimiters, and a restrictive system prompt blocking SQL/schema discussion.',
         ]),
         screenshots: JSON.stringify([
           '/screenshots/pc1.png',
@@ -106,6 +155,26 @@ async function main() {
         liveUrl: null,
         visible: true,
         order: 1,
+      },
+      {
+        title: 'Developer Portfolio',
+        description:
+          "A full-stack portfolio platform with a session-authenticated headless CMS, a custom visitor-analytics dashboard, and an interactive animated UI — the site you're currently viewing.",
+        tech: JSON.stringify(['Next.js', 'React', 'TypeScript', 'Prisma', 'SQLite', 'Tailwind CSS', 'Framer Motion']),
+        bullets: JSON.stringify([
+          'Built a full-stack site on Next.js 16 (App Router) and React 19 in TypeScript, with server components reading from a Prisma-managed SQLite database via a libSQL adapter.',
+          'Implemented a session-authenticated admin CMS with REST route handlers for live CRUD of projects, skills, experience, and settings — content updates require no redeploys.',
+          'Engineered a custom analytics pipeline that persists page views and visitor geo data, surfaced in an admin dashboard built with Recharts.',
+          "Designed an interactive, themeable UI in Framer Motion: parallax cursor-reactive geometry, 3D-tilt project cards, an image lightbox, and a draggable Rubik's-cube motif.",
+          'Added a validated contact pipeline (form to API route to persisted messages) and middleware-based protection for the admin area.',
+        ]),
+        screenshots: JSON.stringify(['/screenshots/por1.png', '/screenshots/por2.png']),
+        startDate: 'May 2026',
+        endDate: null,
+        githubUrl: 'https://github.com/timcuber37/portfolio',
+        liveUrl: null,
+        visible: true,
+        order: 2,
       },
     ],
   })

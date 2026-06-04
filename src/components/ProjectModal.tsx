@@ -9,6 +9,7 @@ import { GithubIcon } from './SocialIcons'
 import Lightbox from './Lightbox'
 import { highlightText } from './HighlightedText'
 import { accentAt } from '@/lib/theme'
+import { useBodyScrollLock } from '@/lib/useBodyScrollLock'
 import type { ParsedProject } from '@/lib/data'
 
 export default function ProjectModal({
@@ -28,6 +29,8 @@ export default function ProjectModal({
   const techColor = new Map(project.tech.map((t, i) => [t.toLowerCase(), accentAt(i)]))
   const colorFor = (kw: string) => techColor.get(kw.toLowerCase()) ?? accent
 
+  useBodyScrollLock(open)
+
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -35,12 +38,7 @@ export default function ProjectModal({
       if (e.key === 'Escape' && lightboxIndex === null) onClose()
     }
     window.addEventListener('keydown', onKey)
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prevOverflow
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [open, lightboxIndex, onClose])
 
   if (typeof document === 'undefined') return null

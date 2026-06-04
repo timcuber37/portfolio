@@ -12,7 +12,13 @@ import { highlightText } from './HighlightedText'
 import { ink, accentAt } from '@/lib/theme'
 import type { ParsedProject } from '@/lib/data'
 
-export default function Projects({ projects }: { projects: ParsedProject[] }) {
+export default function Projects({
+  projects,
+  settings,
+}: {
+  projects: ParsedProject[]
+  settings: Record<string, string>
+}) {
   const [filter, setFilter] = useState<string>('All')
 
   const allTags = ['All', ...Array.from(new Set(projects.flatMap((p) => p.tech)))]
@@ -30,7 +36,9 @@ export default function Projects({ projects }: { projects: ParsedProject[] }) {
           transition={{ duration: 0.5 }}
         >
           <SectionLabel color={ink.blue}>Projects</SectionLabel>
-          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-4">Things I&apos;ve built</h2>
+          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-4">
+            {settings.projectsHeading ?? "Things I've built"}
+          </h2>
         </motion.div>
 
         <motion.div

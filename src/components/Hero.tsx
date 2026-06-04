@@ -1,19 +1,28 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowDown, Download } from 'lucide-react'
 import Image from 'next/image'
 import { GithubIcon, LinkedinIcon } from './SocialIcons'
 import { cube, accentAt } from '@/lib/theme'
 
-const roles = [
+const DEFAULT_ROLES = [
   'Full Stack Software Engineer',
   'CS Graduate Student',
   'Rubik\'s Cube Competitor',
 ]
 
 export default function Hero({ settings }: { settings: Record<string, string> }) {
+  // Rotating roles are editable via the `heroRoles` setting (one per line).
+  const roles = useMemo(() => {
+    const parsed = (settings.heroRoles ?? '')
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    return parsed.length ? parsed : DEFAULT_ROLES
+  }, [settings.heroRoles])
+
   const [roleIndex, setRoleIndex] = useState(0)
   const [displayed, setDisplayed] = useState('')
   const [deleting, setDeleting] = useState(false)
@@ -56,7 +65,7 @@ export default function Hero({ settings }: { settings: Record<string, string> })
           >
             Welcome
           </p>
-          <h1 className="cube-gradient-text text-5xl sm:text-7xl font-bold tracking-tight mb-4">
+          <h1 className="cube-gradient-text text-5xl sm:text-7xl font-bold tracking-tight leading-[1.15] pb-2 mb-4">
             {settings.name ?? 'Timothy Yang'}
           </h1>
           <div className="h-10 flex items-center mb-8">

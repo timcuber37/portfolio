@@ -5,7 +5,13 @@ import { SectionLabel } from './About'
 import { ink, accentAt } from '@/lib/theme'
 import type { ParsedSkill } from '@/lib/data'
 
-export default function Skills({ skills }: { skills: ParsedSkill[] }) {
+export default function Skills({
+  skills,
+  settings,
+}: {
+  skills: ParsedSkill[]
+  settings: Record<string, string>
+}) {
   const grouped = skills.reduce<Record<string, string[]>>((acc, skill) => {
     if (!acc[skill.category]) acc[skill.category] = []
     acc[skill.category].push(skill.name)
@@ -22,7 +28,9 @@ export default function Skills({ skills }: { skills: ParsedSkill[] }) {
           transition={{ duration: 0.5 }}
         >
           <SectionLabel color={ink.green}>Skills</SectionLabel>
-          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-10">Technologies I work with</h2>
+          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-10">
+            {settings.skillsHeading ?? 'Technologies I work with'}
+          </h2>
         </motion.div>
 
         <div className="grid sm:grid-cols-2 gap-8">

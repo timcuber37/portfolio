@@ -165,7 +165,7 @@ export default function GeometricBackground() {
       {/* Large cube anchored top-right. Idle-spins via CSS; drifts toward the cursor. */}
       <motion.div
         style={{ x: cubeX, y: cubeY, willChange: 'transform' }}
-        className="absolute -top-16 -right-20 opacity-[0.22] hidden sm:block"
+        className="absolute -top-16 -right-20 opacity-[0.32] hidden sm:block"
       >
         <RubiksCube size={300} />
       </motion.div>

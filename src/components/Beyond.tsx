@@ -8,41 +8,41 @@ import { ink } from '@/lib/theme'
 
 type Link = { label: string; href: string; icon: React.ReactNode }
 
-const cards: {
-  icon: React.ElementType
-  title: string
-  desc: string
-  color: string
-  links: Link[]
-}[] = [
-  {
-    icon: Trophy,
-    title: 'Speedcubing',
-    desc: 'Ranked top 100 in the United States for 3×3 average through the World Cube Association. I compete at official events and share solves and tutorials on YouTube.',
-    color: ink.red,
-    links: [
-      {
-        label: 'YouTube',
-        href: 'https://www.youtube.com/@timcuber37',
-        icon: <YoutubeIcon size={14} />,
-      },
-      {
-        label: 'WCA Profile',
-        href: 'https://www.worldcubeassociation.org/persons/2019YANT03',
-        icon: <ExternalLink size={14} />,
-      },
-    ],
-  },
-  {
-    icon: Users,
-    title: 'Korean Club Co-Founder',
-    desc: 'Co-founded and serve as Vice President of the SCSU Korean Club, organizing cultural events and building a welcoming community on campus.',
-    color: ink.green,
-    links: [],
-  },
-]
+const CUBING_DESC =
+  'Ranked top 100 in the United States for 3×3 average through the World Cube Association. I compete at official events and share solves and tutorials on YouTube.'
+const KOREAN_TITLE = 'Korean Club Co-Founder'
+const KOREAN_DESC =
+  'Co-founded and serve as Vice President of the SCSU Korean Club, organizing cultural events and building a welcoming community on campus.'
+const YOUTUBE_URL = 'https://www.youtube.com/@timcuber37'
+const WCA_URL = 'https://www.worldcubeassociation.org/persons/2019YANT03'
 
-export default function Beyond() {
+export default function Beyond({ settings }: { settings: Record<string, string> }) {
+  const cards: {
+    icon: React.ElementType
+    title: string
+    desc: string
+    color: string
+    links: Link[]
+  }[] = [
+    {
+      icon: Trophy,
+      title: 'Speedcubing',
+      desc: settings.beyondCubingDesc ?? CUBING_DESC,
+      color: ink.red,
+      links: [
+        { label: 'YouTube', href: settings.youtubeUrl ?? YOUTUBE_URL, icon: <YoutubeIcon size={14} /> },
+        { label: 'WCA Profile', href: settings.wcaUrl ?? WCA_URL, icon: <ExternalLink size={14} /> },
+      ],
+    },
+    {
+      icon: Users,
+      title: settings.beyondKoreanTitle ?? KOREAN_TITLE,
+      desc: settings.beyondKoreanDesc ?? KOREAN_DESC,
+      color: ink.green,
+      links: [],
+    },
+  ]
+
   return (
     <section id="beyond" className="py-24 px-6">
       <div className="max-w-5xl mx-auto">
@@ -53,9 +53,11 @@ export default function Beyond() {
           transition={{ duration: 0.5 }}
         >
           <SectionLabel color={ink.amber}>Beyond Code</SectionLabel>
-          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-3">Life outside the editor</h2>
+          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-3">
+            {settings.beyondHeading ?? 'Life outside the editor'}
+          </h2>
           <p className="text-zinc-600 text-sm mb-10 max-w-md">
-            What I get up to when I&apos;m not building software.
+            {settings.beyondIntro ?? 'What I get up to when I’m not building software.'}
           </p>
         </motion.div>
 

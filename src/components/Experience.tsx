@@ -6,7 +6,13 @@ import { SectionLabel } from './About'
 import { ink, accentAt } from '@/lib/theme'
 import type { ParsedExperience } from '@/lib/data'
 
-export default function Experience({ experience }: { experience: ParsedExperience[] }) {
+export default function Experience({
+  experience,
+  settings,
+}: {
+  experience: ParsedExperience[]
+  settings: Record<string, string>
+}) {
   const work = experience.filter((e) => e.type === 'work')
   const education = experience.filter((e) => e.type === 'education')
 
@@ -20,7 +26,9 @@ export default function Experience({ experience }: { experience: ParsedExperienc
           transition={{ duration: 0.5 }}
         >
           <SectionLabel color={ink.orange}>Experience</SectionLabel>
-          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-12">Work & Education</h2>
+          <h2 className="text-3xl font-bold text-zinc-900 mt-2 mb-12">
+            {settings.experienceHeading ?? 'Work & Education'}
+          </h2>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-12">

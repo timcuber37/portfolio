@@ -171,7 +171,7 @@
 \section{Projects}
     \resumeSubHeadingListStart
     \resumeProjectHeading
-          {\textbf{\href{https://wca-statbot.fly.dev/}{WCA Statbot}} $|$ \emph{Python, Flask, Claude, TiDB Serverless, Supabase, Docker, Fly.io}}{Jan. 2026 - Pres.}
+          {\textbf{\href{https://speedcubemuse.fly.dev/}{SpeedCubeMuse}} $|$ \emph{Python, Flask, Claude, TiDB Serverless, Supabase, Docker, Fly.io}}{Jan. 2026 - Pres.}
           \resumeItemListStart
             \resumeItem{Designed and queried a 6.3M+ row relational database schema, building an AI-powered NL-to-SQL pipeline to enable ad hoc reporting and data access for non-technical users.}
             \resumeItem{Architected a hybrid cloud data warehouse using TiDB Serverless for 1.68GB of WCA competition data and Supabase PostgreSQL, designing schema and data models optimized for analytical query performance.}
