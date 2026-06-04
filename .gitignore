@@ -41,7 +41,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/src/generated/prisma
+# NOTE: the generated Prisma client (src/generated/prisma) is intentionally
+# committed. The `prisma-client` generator emits portable TypeScript with no
+# native binaries, so committing it guarantees it's present on Vercel even if
+# the build's `prisma generate` step is skipped. Regenerate + recommit after
+# changing prisma/schema.prisma.
 
 # local database (rebuild with: npx tsx prisma/seed.ts)
 *.db
