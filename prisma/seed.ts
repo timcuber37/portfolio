@@ -1,9 +1,14 @@
-import 'dotenv/config'
+import { config } from 'dotenv'
 import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { PrismaClient } from '../src/generated/prisma/client'
 
+// Load env like Next.js: real shell env wins, then .env.local, then .env.
+config({ path: '.env.local' })
+config({ path: '.env' })
+
 const url = process.env.DATABASE_URL ?? 'file:./dev.db'
-const adapter = new PrismaLibSql({ url })
+const authToken = process.env.DATABASE_AUTH_TOKEN
+const adapter = new PrismaLibSql(authToken ? { url, authToken } : { url })
 const prisma = new PrismaClient({ adapter } as ConstructorParameters<typeof PrismaClient>[0])
 
 async function main() {

@@ -12,6 +12,10 @@ import AnalyticsTracker from '@/components/AnalyticsTracker'
 import GeometricBackground from '@/components/GeometricBackground'
 import ScrollProgress from '@/components/ScrollProgress'
 
+// Render per request so content edited in the admin panel appears immediately
+// (and the production build doesn't need a database connection).
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const [projects, experience, skills, settings] = await Promise.all([
     getProjects(),

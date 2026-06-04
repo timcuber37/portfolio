@@ -5,7 +5,9 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 
 function createPrisma() {
   const url = process.env.DATABASE_URL ?? 'file:./dev.db'
-  const adapter = new PrismaLibSql({ url })
+  // A token is required for hosted libSQL (Turso) in production; local file URLs use none.
+  const authToken = process.env.DATABASE_AUTH_TOKEN
+  const adapter = new PrismaLibSql(authToken ? { url, authToken } : { url })
   return new PrismaClient({ adapter } as ConstructorParameters<typeof PrismaClient>[0])
 }
 
