@@ -1,14 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Lock } from 'lucide-react'
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,8 +18,10 @@ export default function AdminLogin() {
       body: JSON.stringify({ password }),
     })
     if (res.ok) {
-      router.push('/admin')
-      router.refresh()
+      // Full-page navigation so middleware + the /admin page re-render with the
+      // freshly-set admin_session cookie (a soft router.push serves stale,
+      // pre-login state from the client cache until a manual refresh).
+      window.location.assign('/admin')
     } else {
       setError('Invalid password')
       setLoading(false)
