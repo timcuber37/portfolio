@@ -173,7 +173,11 @@ async function main() {
           "Designed an interactive, themeable UI in Framer Motion: parallax cursor-reactive geometry, 3D-tilt project cards, an image lightbox, and a draggable Rubik's-cube motif.",
           'Added a validated contact pipeline (form to API route to persisted messages) and middleware-based protection for the admin area.',
         ]),
-        screenshots: JSON.stringify(['/screenshots/por1.png', '/screenshots/por2.png']),
+        screenshots: JSON.stringify([
+          '/screenshots/por1.png',
+          '/screenshots/por2.png',
+          '/screenshots/por3.png',
+        ]),
         startDate: 'May 2026',
         endDate: null,
         githubUrl: 'https://github.com/timcuber37/portfolio',
