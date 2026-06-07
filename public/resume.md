@@ -106,10 +106,6 @@
 \begin{document}
 
 %----------HEADING----------
-% \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
-%   \textbf{\href{http://sourabhbajaj.com/}{\Large Sourabh Bajaj}} & Email : \href{mailto:sourabh@sourabhbajaj.com}{sourabh@sourabhbajaj.com}\\
-%   \href{http://sourabhbajaj.com/}{http://www.sourabhbajaj.com} & Mobile : +1-123-456-7890 \\
-% \end{tabular*}
 
 \begin{center}
     \textbf{\Huge \scshape Timothy Yang} \\ \vspace{1pt}
@@ -124,18 +120,15 @@
   \resumeSubHeadingListStart
     \resumeSubheading
       {Southern Connecticut State University}{New Haven, CT}
-      {Master of Science in Computer Science}{Jan. 2026 - Dec. 2027}
-    
-      
+      {Master of Science in Computer Science}{Jan. 2026 -- Dec. 2027}
+
     \resumeSubheading
     {Southern Connecticut State University}{New Haven, CT}
-    {Bachelor of Science in Computer Science, Minor in Mathematics}{Jan. 2024 - Dec. 2025}
-    % \resumeSubItem{GPA: 3.47}
-    % \resumeSubItem{Coursework: Data Structures, Database Systems, Algorithms, Software Design/Development, Artificial Intelligence, Operating Systems, Programming Languages, Deep Learning, Distrib/Parallel Computing}
-      
+    {Bachelor of Science in Computer Science, Minor in Mathematics}{Jan. 2024 -- Dec. 2025}
+
     \resumeSubheading
       {Rensselaer Polytechnic Institute}{Troy, NY}
-      {}{Aug. 2020 -- Dec 2023}
+      {}{Aug. 2020 -- Dec. 2023}
   \resumeSubHeadingListEnd
 
 
@@ -148,21 +141,17 @@
       {Southern Connecticut State University}{New Haven, CT}
       \resumeItemListStart
         \resumeItem{Diagnosed and resolved 5--10 daily AV service tickets, troubleshooting projectors, speakers, and control systems.}
-        \resumeItem{Collaborated with IT staff to coordinate AV infrastructure troubleshooting, reducing repeat incidents.}
+        \resumeItem{Collaborated with IT staff on AV infrastructure troubleshooting, reducing repeat incidents.}
       \resumeItemListEnd
 
     \resumeSubheading
       {Information Technology Intern}{May 2023 -- Aug. 2023}
       {Connex Credit Union}{North Haven, CT}
       \resumeItemListStart
-        \resumeItem{Supported core system migration by cataloging database entries, validating data integrity, and assisting with data cleanup to ensure accurate records post-conversion.}
-        \resumeItem{Provided helpdesk support resolving 5-10 tickets daily across various hardware, software, and network issues.}
-        \resumeItem{Collaborated with 5-person IT team to resolve technical issues across 6 branches, supporting 100+ employees.}
-        \resumeItem{Imaged and deployed 50+ workstations using Acronis across a variety of office desktop towers and laptops.}
-        
-    \resumeItemListEnd
-
-    
+        \resumeItem{Supported a core-system migration by cataloging database entries, validating data integrity, and cleaning up records for accurate post-conversion data.}
+        \resumeItem{Resolved 5--10 daily helpdesk tickets across hardware, software, and network issues for 100+ employees over 6 branches.}
+        \resumeItem{Imaged and deployed 50+ workstations using Acronis across office desktops and laptops.}
+      \resumeItemListEnd
 
   \resumeSubHeadingListEnd
 
@@ -170,40 +159,42 @@
 %-----------PROJECTS-----------
 \section{Projects}
     \resumeSubHeadingListStart
+
     \resumeProjectHeading
-          {\textbf{\href{https://speedcubemuse.fly.dev/}{SpeedCubeMuse}} $|$ \emph{Python, Flask, Claude, TiDB Serverless, Supabase, Docker, Fly.io}}{Jan. 2026 - Pres.}
+          {\textbf{\href{https://speedcubemuse.fly.dev/}{SpeedCubeMuse}} $|$ \emph{Python, Flask, Claude, pgvector, TiDB, Docker, Fly.io}}{Jan. 2026 -- Pres.}
           \resumeItemListStart
-            \resumeItem{Designed and queried a 6.3M+ row relational database schema, building an AI-powered NL-to-SQL pipeline to enable ad hoc reporting and data access for non-technical users.}
-            \resumeItem{Architected a hybrid cloud data warehouse using TiDB Serverless for 1.68GB of WCA competition data and Supabase PostgreSQL, designing schema and data models optimized for analytical query performance.}
-            \resumeItem{Enforced database security through Row Level Security policies and JWT-authenticated clients, ensuring proper access controls and data integrity across multi-user environments.}
-            \resumeItem{Developed Python ETL scripts to automate extraction, transformation, and loading of external WCA competition data into the structured database schema on a recurring basis.}
-            
+            \resumeItem{Built an AI-powered natural-language-to-SQL interface over a 6.3M+ row WCA competition database, using Claude to translate plain-English questions into validated, read-only SQL for non-technical users.}
+            \resumeItem{Developed a Retrieval-Augmented Generation chatbot for WCA regulations with Voyage AI embeddings, pgvector similarity search, and a reranker over 697 regulations, returning grounded answers with citations.}
+            \resumeItem{Automated database maintenance into a single command via a Python pipeline that pulls the WCA export API and bulk-loads multi-GB data into TiDB Serverless, backed by an 89-test pytest suite for data integrity.}
+            \resumeItem{Hardened the app with a strict CSP, per-endpoint rate limiting, and non-SELECT query rejection; deployed a multi-process Docker container (web app + Discord bot) to Fly.io via a GitHub Actions CI/CD pipeline.}
           \resumeItemListEnd
+
       \resumeProjectHeading
-          {\textbf{\href{https://github.com/timcuber37/poke-collect}{Poke-Collect}} $|$ \emph{Python, Flask, MySQL, Cassandra, PostgreSQL, Kafka, Ollama, PokeWallet}}{Mar. 2026 - Pres.}
+          {\textbf{\href{https://github.com/timcuber37/poke-collect}{Poke-Collect}} $|$ \emph{Python, Flask, Kafka, Cassandra, PostgreSQL, MySQL}}{Mar. 2026 -- Pres.}
           \resumeItemListStart
-            \resumeItem{Built a Pokémon TCG collection manager on a CQRS architecture using Python/Flask, MySQL (writes), Apache Cassandra (read models), PostgreSQL + pgvector (vector search), and Apache Kafka as the event bus}
-            \resumeItem{Implemented a RAG chatbot over 10,000+ cards using sentence-transformers embeddings, pgvector cosine-similarity retrieval, and a locally-hosted Ollama (phi3:mini) LLM for natural-language card Q\&A.}         
-            \resumeItem{Engineered a rate-limit-aware sync service pulling 146 Pokémon TCG sets from the PokéWallet REST API, writing idempotent upserts to Cassandra and PostgreSQL within a 100 req/hour budget.}
-            \resumeItem{Built event-driven Kafka consumers projecting write-side events into denormalized Cassandra read models, enabling JOIN-free collection queries across 4 cooperating distributed Python processes.}
-            \resumeItem{Designed lazy TCGPlayer price enrichment that fetches live prices on collection add and caches them via COALESCE upserts, surfacing per-card and total portfolio value in the Jinja2 UI.}
-            \resumeItem{Hardened a public Ollama chat endpoint against prompt injection with route-level input caps, structured delimiters, and a restrictive system prompt blocking SQL/schema discussion.}
-            
+            \resumeItem{Built a Pokémon TCG collection manager on a CQRS architecture with Python/Flask --- MySQL for writes, Apache Cassandra for read models, PostgreSQL + pgvector for vector search, and Apache Kafka as the event bus.}
+            \resumeItem{Engineered event-driven Kafka consumers that project write-side events into denormalized Cassandra read models, enabling JOIN-free queries across 4 cooperating distributed processes.}
+            \resumeItem{Implemented a rate-limit-aware sync (146 sets from the PokéWallet API with idempotent upserts under a 100 req/hr budget) and lazy TCGPlayer price enrichment surfacing per-card and total portfolio value.}
           \resumeItemListEnd
-      
+
+      \resumeProjectHeading
+          {\textbf{\href{https://github.com/timcuber37/portfolio}{Developer Portfolio}} $|$ \emph{Next.js, React, TypeScript, Prisma, Turso, Claude}}{May 2026 -- Pres.}
+          \resumeItemListStart
+            \resumeItem{Built a full-stack portfolio and session-authenticated headless CMS with Next.js 16, React 19, and TypeScript, deployed on Vercel with a Turso (libSQL) database via the Prisma driver adapter.}
+            \resumeItem{Integrated the Anthropic Claude API to auto-draft project entries from GitHub READMEs and rewrite content from natural-language instructions, using prompt caching and adaptive thinking.}
+            \resumeItem{Built a custom visitor-analytics pipeline (page views, downloads, messages) with geo detection in a Recharts dashboard, plus admin CRUD over all site content with no redeploys.}
+          \resumeItemListEnd
+
     \resumeSubHeadingListEnd
 
 
-
-%
 %-----------SKILLS-----------
 \section{Technical Skills}
  \begin{itemize}[leftmargin=0.15in, label={}]
     \small{\item{
-     \textbf{Languages}{: MySQL, PostgreSQL, Python, Java, C/C++, TypeScript, JavaScript, HTML/CSS, Haskell} \\
-     \textbf{Developer Tools}{: Git/GitHub, TiDB, Supabase, Docker, AWS, GCP, Fly.io, Visual Studio} \\
-     \textbf{Libraries \& Frameworks}{: React, Node, Flask, npm, Vite, NumPy, Sklearn, Matplotlib, TensorFlow, Asyncio} \\
-     \textbf{Practices}{: SQL/Database Design, Data Modeling, Documentation, Agile/Scrum, Object-Oriented Design}
+     \textbf{Languages}{: Python, TypeScript, JavaScript, SQL, C/C++, Java} \\
+     \textbf{Frameworks \& Tools}{: React, Next.js, Flask, Node, Docker, Kafka, Git} \\
+     \textbf{Data \& Cloud}{: PostgreSQL, MySQL, Cassandra, TiDB, AWS, Fly.io, Vercel}
     }}
  \end{itemize}
 
