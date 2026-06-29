@@ -1,4 +1,4 @@
-import { getProjects, getExperience, getSkills, getSettings } from '@/lib/data'
+import { getProjects, getExperience, getSkills, getSettings, getCustomSections } from '@/lib/data'
 import Navbar from '@/components/Navbar'
 import Hero from '@/components/Hero'
 import About from '@/components/About'
@@ -6,6 +6,7 @@ import Projects from '@/components/Projects'
 import Skills from '@/components/Skills'
 import Experience from '@/components/Experience'
 import Beyond from '@/components/Beyond'
+import CustomSections from '@/components/CustomSections'
 import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
 import AnalyticsTracker from '@/components/AnalyticsTracker'
@@ -17,11 +18,12 @@ import ScrollProgress from '@/components/ScrollProgress'
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
-  const [projects, experience, skills, settings] = await Promise.all([
+  const [projects, experience, skills, settings, customSections] = await Promise.all([
     getProjects(),
     getExperience(),
     getSkills(),
     getSettings(),
+    getCustomSections(),
   ])
 
   return (
@@ -37,6 +39,7 @@ export default async function Home() {
         <Skills skills={skills} settings={settings} />
         <Experience experience={experience} settings={settings} />
         <Beyond settings={settings} />
+        <CustomSections sections={customSections} />
         <Contact settings={settings} />
       </main>
       <Footer settings={settings} />

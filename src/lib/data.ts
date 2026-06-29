@@ -58,6 +58,15 @@ export async function getSettings(): Promise<Record<string, string>> {
   return Object.fromEntries(rows.map((r) => [r.key, r.value]))
 }
 
+export async function getCustomSections() {
+  return prisma.customSection.findMany({ where: { visible: true }, orderBy: { order: 'asc' } })
+}
+
+export async function getAllCustomSections() {
+  return prisma.customSection.findMany({ orderBy: { order: 'asc' } })
+}
+
 export type ParsedProject = Awaited<ReturnType<typeof getProjects>>[number]
 export type ParsedExperience = Awaited<ReturnType<typeof getExperience>>[number]
 export type ParsedSkill = Awaited<ReturnType<typeof getSkills>>[number]
+export type CustomSectionRow = Awaited<ReturnType<typeof getCustomSections>>[number]

@@ -67,6 +67,11 @@ export type Skill = Prisma.SkillModel
  */
 export type SiteSetting = Prisma.SiteSettingModel
 /**
+ * Model CustomSection
+ * 
+ */
+export type CustomSection = Prisma.CustomSectionModel
+/**
  * Model ContactMessage
  * 
  */

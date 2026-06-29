@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Trash2, Eye, EyeOff, Save, Download, X, Plus } from 'lucide-react'
+import { Trash2, Eye, EyeOff, Save, Download, X, Plus, ChevronUp, ChevronDown } from 'lucide-react'
 
 interface Project {
   id: number
@@ -36,6 +36,15 @@ interface Skill {
   visible: boolean
 }
 
+interface CustomSection {
+  id: number
+  label: string
+  heading: string
+  body: string
+  visible: boolean
+  order: number
+}
+
 interface GhRepo {
   full_name: string
   name: string
@@ -45,7 +54,14 @@ interface GhRepo {
   archived: boolean
 }
 
-type Tab = 'settings' | 'projects' | 'experience' | 'skills'
+type Tab = 'settings' | 'projects' | 'experience' | 'sections' | 'skills'
+
+type SectionDraft = {
+  label: string
+  heading: string
+  body: string
+  visible: boolean
+}
 
 type ProjectDraft = {
   title: string
@@ -127,6 +143,8 @@ const emptyExp: ExpDraft = {
   visible: true,
 }
 
+const emptySection: SectionDraft = { label: '', heading: '', body: '', visible: true }
+
 export default function ContentEditor() {
   const [tab, setTab] = useState<Tab>('settings')
   const [projects, setProjects] = useState<Project[]>([])
@@ -160,10 +178,16 @@ export default function ContentEditor() {
   const [skillDraft, setSkillDraft] = useState({ name: '', category: '' })
   const [newSkill, setNewSkill] = useState({ name: '', category: '' })
 
+  // Custom sections
+  const [sections, setSections] = useState<CustomSection[]>([])
+  const [editSectionId, setEditSectionId] = useState<number | 'new' | null>(null)
+  const [sectionDraft, setSectionDraft] = useState<SectionDraft>(emptySection)
+
   useEffect(() => {
     fetch('/api/admin/projects').then((r) => r.json()).then(setProjects)
     fetch('/api/admin/experience').then((r) => r.json()).then(setExperience)
     fetch('/api/admin/skills').then((r) => r.json()).then(setSkills)
+    fetch('/api/admin/sections').then((r) => r.json()).then(setSections)
     fetch('/api/admin/settings').then((r) => r.json()).then(setSettings)
   }, [])
 
@@ -308,6 +332,20 @@ export default function ContentEditor() {
     setProjects(projects.map((x) => (x.id === p.id ? updated : x)))
   }
 
+  // Move a project up (-1) or down (+1) and persist the new order.
+  const moveProject = async (index: number, dir: -1 | 1) => {
+    const next = index + dir
+    if (next < 0 || next >= projects.length) return
+    const reordered = [...projects]
+    ;[reordered[index], reordered[next]] = [reordered[next], reordered[index]]
+    setProjects(reordered)
+    await fetch('/api/admin/projects/reorder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: reordered.map((p) => p.id) }),
+    })
+  }
+
   // ---- Experience ----
   const startEditExp = (e: Experience) => {
     setEditExpId(e.id)
@@ -403,6 +441,54 @@ export default function ContentEditor() {
     setSkills(skills.filter((s) => s.id !== id))
   }
 
+  // ---- Custom sections ----
+  const startEditSection = (s: CustomSection) => {
+    setEditSectionId(s.id)
+    setSectionDraft({ label: s.label, heading: s.heading, body: s.body, visible: s.visible })
+  }
+
+  const saveSection = async () => {
+    const isNew = editSectionId === 'new'
+    const res = await fetch(isNew ? '/api/admin/sections' : `/api/admin/sections/${editSectionId}`, {
+      method: isNew ? 'POST' : 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sectionDraft),
+    })
+    const saved = await res.json()
+    if (!res.ok) return
+    setSections((prev) => (isNew ? [...prev, saved] : prev.map((s) => (s.id === saved.id ? saved : s))))
+    setEditSectionId(null)
+  }
+
+  const deleteSection = async (id: number) => {
+    if (!confirm('Delete this section?')) return
+    await fetch(`/api/admin/sections/${id}`, { method: 'DELETE' })
+    setSections(sections.filter((s) => s.id !== id))
+  }
+
+  const toggleSectionVisibility = async (s: CustomSection) => {
+    const updated = { ...s, visible: !s.visible }
+    await fetch(`/api/admin/sections/${s.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    })
+    setSections(sections.map((x) => (x.id === s.id ? updated : x)))
+  }
+
+  const moveSection = async (index: number, dir: -1 | 1) => {
+    const next = index + dir
+    if (next < 0 || next >= sections.length) return
+    const reordered = [...sections]
+    ;[reordered[index], reordered[next]] = [reordered[next], reordered[index]]
+    setSections(reordered)
+    await fetch('/api/admin/sections/reorder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: reordered.map((s) => s.id) }),
+    })
+  }
+
   const groups = [...new Set(SETTING_FIELDS.map((f) => f.group))]
   const btn = 'flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-medium rounded-md transition-colors'
 
@@ -414,7 +500,7 @@ export default function ContentEditor() {
       </div>
 
       <div className="flex gap-1 border-b border-zinc-800">
-        {(['settings', 'projects', 'experience', 'skills'] as Tab[]).map((t) => (
+        {(['settings', 'projects', 'experience', 'sections', 'skills'] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -543,18 +629,38 @@ export default function ContentEditor() {
             <ProjectForm draft={projectDraft} setDraft={setProjectDraft} onSave={saveProject} onCancel={() => setEditProjectId(null)} title="New project" />
           )}
 
-          {projects.map((p) => (
+          {projects.map((p, i) => (
             <div key={p.id} className="bg-zinc-900 border border-zinc-800 rounded-lg">
               <div className="flex items-start justify-between gap-4 p-4">
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium ${p.visible ? 'text-white' : 'text-zinc-500'}`}>{p.title}</p>
-                  <p className="text-xs text-zinc-600 mt-0.5">
-                    {p.startDate} — {p.endDate ?? 'Present'}
-                  </p>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {p.tech.slice(0, 6).map((t) => (
-                      <span key={t} className="px-2 py-0.5 text-xs bg-zinc-800 text-zinc-500 rounded">{t}</span>
-                    ))}
+                <div className="flex items-start gap-2 flex-1 min-w-0">
+                  <div className="flex flex-col shrink-0 -ml-1">
+                    <button
+                      onClick={() => moveProject(i, -1)}
+                      disabled={i === 0}
+                      className="p-0.5 text-zinc-600 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-600 transition-colors"
+                      title="Move up"
+                    >
+                      <ChevronUp size={15} />
+                    </button>
+                    <button
+                      onClick={() => moveProject(i, 1)}
+                      disabled={i === projects.length - 1}
+                      className="p-0.5 text-zinc-600 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-600 transition-colors"
+                      title="Move down"
+                    >
+                      <ChevronDown size={15} />
+                    </button>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium ${p.visible ? 'text-white' : 'text-zinc-500'}`}>{p.title}</p>
+                    <p className="text-xs text-zinc-600 mt-0.5">
+                      {p.startDate} — {p.endDate ?? 'Present'}
+                    </p>
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {p.tech.slice(0, 6).map((t) => (
+                        <span key={t} className="px-2 py-0.5 text-xs bg-zinc-800 text-zinc-500 rounded">{t}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -673,6 +779,74 @@ export default function ContentEditor() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ===================== CUSTOM SECTIONS ===================== */}
+      {tab === 'sections' && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-zinc-400">{sections.length} custom section(s)</p>
+            <button
+              onClick={() => {
+                setEditSectionId('new')
+                setSectionDraft(emptySection)
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500 text-sm font-medium rounded-md transition-colors"
+            >
+              <Plus size={14} /> New section
+            </button>
+          </div>
+          <p className="text-xs text-zinc-600">
+            Custom sections render on the page between the Beyond and Contact sections, in this order.
+          </p>
+
+          {editSectionId === 'new' && (
+            <SectionForm draft={sectionDraft} setDraft={setSectionDraft} onSave={saveSection} onCancel={() => setEditSectionId(null)} />
+          )}
+
+          {sections.map((s, i) => (
+            <div key={s.id} className="bg-zinc-900 border border-zinc-800 rounded-lg">
+              <div className="flex items-start justify-between gap-4 p-4">
+                <div className="flex items-start gap-2 flex-1 min-w-0">
+                  <div className="flex flex-col shrink-0 -ml-1">
+                    <button onClick={() => moveSection(i, -1)} disabled={i === 0} className="p-0.5 text-zinc-600 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-600 transition-colors" title="Move up">
+                      <ChevronUp size={15} />
+                    </button>
+                    <button onClick={() => moveSection(i, 1)} disabled={i === sections.length - 1} className="p-0.5 text-zinc-600 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-600 transition-colors" title="Move down">
+                      <ChevronDown size={15} />
+                    </button>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium ${s.visible ? 'text-white' : 'text-zinc-500'}`}>{s.heading || s.label || '(untitled)'}</p>
+                    {s.label && <p className="text-xs text-zinc-600 mt-0.5 uppercase tracking-wider">{s.label}</p>}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => (editSectionId === s.id ? setEditSectionId(null) : startEditSection(s))}
+                    className={`px-2 py-1 text-xs rounded border transition-colors ${
+                      editSectionId === s.id ? 'border-blue-500 text-blue-400' : 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
+                    }`}
+                  >
+                    Edit
+                  </button>
+                  <button onClick={() => toggleSectionVisibility(s)} className="p-1.5 text-zinc-500 hover:text-white transition-colors" title={s.visible ? 'Hide' : 'Show'}>
+                    {s.visible ? <Eye size={15} /> : <EyeOff size={15} />}
+                  </button>
+                  <button onClick={() => deleteSection(s.id)} className="p-1.5 text-zinc-500 hover:text-red-400 transition-colors">
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+              </div>
+              {editSectionId === s.id && (
+                <div className="border-t border-zinc-800 p-4">
+                  <SectionForm draft={sectionDraft} setDraft={setSectionDraft} onSave={saveSection} onCancel={() => setEditSectionId(null)} />
+                </div>
+              )}
+            </div>
+          ))}
+          {sections.length === 0 && <p className="text-sm text-zinc-500">No custom sections yet — click “New section” to add one.</p>}
         </div>
       )}
 
@@ -859,6 +1033,42 @@ function ExpForm({
       </label>
       <div className="flex items-center gap-3">
         <button onClick={onSave} disabled={!draft.title.trim()} className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-medium rounded-md transition-colors">
+          <Save size={14} /> Save
+        </button>
+        <button onClick={onCancel} className="text-sm text-zinc-500 hover:text-white transition-colors">Cancel</button>
+      </div>
+    </div>
+  )
+}
+
+function SectionForm({
+  draft,
+  setDraft,
+  onSave,
+  onCancel,
+}: {
+  draft: SectionDraft
+  setDraft: React.Dispatch<React.SetStateAction<SectionDraft>>
+  onSave: () => void
+  onCancel: () => void
+}) {
+  return (
+    <div className="space-y-3">
+      <Field label="Section label (small uppercase tag)">
+        <input value={draft.label} onChange={(e) => setDraft((d) => ({ ...d, label: e.target.value }))} className={FORM_INPUT} placeholder="e.g. Awards" />
+      </Field>
+      <Field label="Heading">
+        <input value={draft.heading} onChange={(e) => setDraft((d) => ({ ...d, heading: e.target.value }))} className={FORM_INPUT} placeholder="e.g. Recognition and Awards" />
+      </Field>
+      <Field label="Body (a blank line separates paragraphs)">
+        <textarea rows={5} value={draft.body} onChange={(e) => setDraft((d) => ({ ...d, body: e.target.value }))} className={`${FORM_INPUT} resize-none`} />
+      </Field>
+      <label className="flex items-center gap-2 text-sm text-zinc-400">
+        <input type="checkbox" checked={draft.visible} onChange={(e) => setDraft((d) => ({ ...d, visible: e.target.checked }))} className="accent-blue-500" />
+        Visible on site
+      </label>
+      <div className="flex items-center gap-3">
+        <button onClick={onSave} disabled={!draft.heading.trim() && !draft.label.trim()} className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-medium rounded-md transition-colors">
           <Save size={14} /> Save
         </button>
         <button onClick={onCancel} className="text-sm text-zinc-500 hover:text-white transition-colors">Cancel</button>

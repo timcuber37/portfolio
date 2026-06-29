@@ -63,6 +63,15 @@ model SiteSetting {
   value String
 }
 
+model CustomSection {
+  id      Int     @id @default(autoincrement())
+  label   String
+  heading String
+  body    String
+  visible Boolean @default(true)
+  order   Int     @default(0)
+}
+
 model ContactMessage {
   id        Int      @id @default(autoincrement())
   name      String

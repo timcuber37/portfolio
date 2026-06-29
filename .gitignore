@@ -52,3 +52,8 @@ next-env.d.ts
 *.db-journal
 *.db-wal
 *.db-shm
+
+# personal job-application files (kept out of the repo / deploy)
+description.md
+cover-letter*.md
+public/resume.md

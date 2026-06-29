@@ -56,6 +56,7 @@ export const ModelName = {
   Experience: 'Experience',
   Skill: 'Skill',
   SiteSetting: 'SiteSetting',
+  CustomSection: 'CustomSection',
   ContactMessage: 'ContactMessage'
 } as const
 
@@ -141,6 +142,18 @@ export const SiteSettingScalarFieldEnum = {
 } as const
 
 export type SiteSettingScalarFieldEnum = (typeof SiteSettingScalarFieldEnum)[keyof typeof SiteSettingScalarFieldEnum]
+
+
+export const CustomSectionScalarFieldEnum = {
+  id: 'id',
+  label: 'label',
+  heading: 'heading',
+  body: 'body',
+  visible: 'visible',
+  order: 'order'
+} as const
+
+export type CustomSectionScalarFieldEnum = (typeof CustomSectionScalarFieldEnum)[keyof typeof CustomSectionScalarFieldEnum]
 
 
 export const ContactMessageScalarFieldEnum = {

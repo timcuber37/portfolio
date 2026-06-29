@@ -389,6 +389,7 @@ export const ModelName = {
   Experience: 'Experience',
   Skill: 'Skill',
   SiteSetting: 'SiteSetting',
+  CustomSection: 'CustomSection',
   ContactMessage: 'ContactMessage'
 } as const
 
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "analyticsEvent" | "project" | "experience" | "skill" | "siteSetting" | "contactMessage"
+    modelProps: "analyticsEvent" | "project" | "experience" | "skill" | "siteSetting" | "customSection" | "contactMessage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -779,6 +780,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CustomSection: {
+      payload: Prisma.$CustomSectionPayload<ExtArgs>
+      fields: Prisma.CustomSectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CustomSectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CustomSectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload>
+        }
+        findFirst: {
+          args: Prisma.CustomSectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CustomSectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload>
+        }
+        findMany: {
+          args: Prisma.CustomSectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload>[]
+        }
+        create: {
+          args: Prisma.CustomSectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload>
+        }
+        createMany: {
+          args: Prisma.CustomSectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CustomSectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload>[]
+        }
+        delete: {
+          args: Prisma.CustomSectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload>
+        }
+        update: {
+          args: Prisma.CustomSectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.CustomSectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CustomSectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CustomSectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.CustomSectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomSectionPayload>
+        }
+        aggregate: {
+          args: Prisma.CustomSectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCustomSection>
+        }
+        groupBy: {
+          args: Prisma.CustomSectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomSectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CustomSectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomSectionCountAggregateOutputType> | number
+        }
+      }
+    }
     ContactMessage: {
       payload: Prisma.$ContactMessagePayload<ExtArgs>
       fields: Prisma.ContactMessageFieldRefs
@@ -958,6 +1033,18 @@ export const SiteSettingScalarFieldEnum = {
 } as const
 
 export type SiteSettingScalarFieldEnum = (typeof SiteSettingScalarFieldEnum)[keyof typeof SiteSettingScalarFieldEnum]
+
+
+export const CustomSectionScalarFieldEnum = {
+  id: 'id',
+  label: 'label',
+  heading: 'heading',
+  body: 'body',
+  visible: 'visible',
+  order: 'order'
+} as const
+
+export type CustomSectionScalarFieldEnum = (typeof CustomSectionScalarFieldEnum)[keyof typeof CustomSectionScalarFieldEnum]
 
 
 export const ContactMessageScalarFieldEnum = {
@@ -1143,6 +1230,7 @@ export type GlobalOmitConfig = {
   experience?: Prisma.ExperienceOmit
   skill?: Prisma.SkillOmit
   siteSetting?: Prisma.SiteSettingOmit
+  customSection?: Prisma.CustomSectionOmit
   contactMessage?: Prisma.ContactMessageOmit
 }
 
