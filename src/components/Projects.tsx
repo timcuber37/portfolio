@@ -207,6 +207,11 @@ function ProjectCard({ project, index }: { project: ParsedProject; index: number
               <span>{highlightText(bullet, project.tech, colorFor)}</span>
             </li>
           ))}
+          {project.bullets.length > 3 && (
+            <li className="text-xs font-medium pl-3" style={{ color: accent }}>
+              More...
+            </li>
+          )}
         </ul>
 
         <div className="flex flex-wrap gap-1.5 mt-auto">
