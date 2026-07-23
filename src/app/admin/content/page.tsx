@@ -400,6 +400,20 @@ export default function ContentEditor() {
     setExperience(experience.map((x) => (x.id === e.id ? updated : x)))
   }
 
+  // Move an experience entry up (-1) or down (+1) and persist the new order.
+  const moveExp = async (index: number, dir: -1 | 1) => {
+    const next = index + dir
+    if (next < 0 || next >= experience.length) return
+    const reordered = [...experience]
+    ;[reordered[index], reordered[next]] = [reordered[next], reordered[index]]
+    setExperience(reordered)
+    await fetch('/api/admin/experience/reorder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: reordered.map((e) => e.id) }),
+    })
+  }
+
   // ---- Skills ----
   const addSkill = async () => {
     if (!newSkill.name.trim() || !newSkill.category.trim()) return
@@ -745,15 +759,25 @@ export default function ContentEditor() {
             <ExpForm draft={expDraft} setDraft={setExpDraft} onSave={saveExp} onCancel={() => setEditExpId(null)} />
           )}
 
-          {experience.map((e) => (
+          {experience.map((e, i) => (
             <div key={e.id} className="bg-zinc-900 border border-zinc-800 rounded-lg">
               <div className="flex items-start justify-between gap-4 p-4">
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium ${e.visible ? 'text-white' : 'text-zinc-500'}`}>
-                    {e.title} <span className="text-zinc-600 font-normal">· {e.type}</span>
-                  </p>
-                  <p className="text-xs text-zinc-500 mt-0.5">{e.company} · {e.location}</p>
-                  <p className="text-xs text-zinc-600 mt-0.5">{e.startDate} — {e.endDate ?? 'Present'}</p>
+                <div className="flex items-start gap-2 flex-1 min-w-0">
+                  <div className="flex flex-col shrink-0 -ml-1">
+                    <button onClick={() => moveExp(i, -1)} disabled={i === 0} className="p-0.5 text-zinc-600 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-600 transition-colors" title="Move up">
+                      <ChevronUp size={15} />
+                    </button>
+                    <button onClick={() => moveExp(i, 1)} disabled={i === experience.length - 1} className="p-0.5 text-zinc-600 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-600 transition-colors" title="Move down">
+                      <ChevronDown size={15} />
+                    </button>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium ${e.visible ? 'text-white' : 'text-zinc-500'}`}>
+                      {e.title} <span className="text-zinc-600 font-normal">· {e.type}</span>
+                    </p>
+                    <p className="text-xs text-zinc-500 mt-0.5">{e.company} · {e.location}</p>
+                    <p className="text-xs text-zinc-600 mt-0.5">{e.startDate} — {e.endDate ?? 'Present'}</p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <button

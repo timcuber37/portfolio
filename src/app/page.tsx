@@ -36,8 +36,8 @@ export default async function Home() {
         <Hero settings={settings} />
         <About settings={settings} />
         <Projects projects={projects} settings={settings} />
-        <Skills skills={skills} settings={settings} />
         <Experience experience={experience} settings={settings} />
+        <Skills skills={skills} settings={settings} />
         <Beyond settings={settings} />
         <CustomSections sections={customSections} />
         <Contact settings={settings} />
