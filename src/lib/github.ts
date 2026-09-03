@@ -3,22 +3,42 @@
 
 const API = 'https://api.github.com'
 
-function headers(): HeadersInit {
+// Blank-but-present values are common (an unset Vercel var, a quoted empty
+// string in .env), and sending `Bearer ` 401s every call — treat them as absent.
+function token(): string | null {
+  const raw = (process.env.GITHUB_TOKEN ?? '').trim().replace(/^['"]|['"]$/g, '').trim()
+  return raw || null
+}
+
+function headers(auth: boolean): HeadersInit {
   const h: Record<string, string> = {
     Accept: 'application/vnd.github+json',
     'User-Agent': 'portfolio-importer',
     'X-GitHub-Api-Version': '2022-11-28',
   }
-  if (process.env.GITHUB_TOKEN) h.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+  const t = token()
+  if (auth && t) h.Authorization = `Bearer ${t}`
   return h
 }
 
 async function gh<T>(path: string): Promise<T> {
-  const res = await fetch(`${API}${path}`, { headers: headers(), cache: 'no-store' })
+  let res = await fetch(`${API}${path}`, { headers: headers(true), cache: 'no-store' })
+
+  // An expired or malformed token 401s even on public endpoints that need no
+  // auth. The importer reads public repos, so drop the token and retry once
+  // rather than failing outright.
+  if (res.status === 401 && token()) {
+    console.warn(`GitHub rejected GITHUB_TOKEN (401) — retrying ${path} unauthenticated. Rotate or unset the token.`)
+    res = await fetch(`${API}${path}`, { headers: headers(false), cache: 'no-store' })
+  }
+
   if (!res.ok) {
     const remaining = res.headers.get('x-ratelimit-remaining')
-    if (res.status === 403 && remaining === '0') {
-      throw new Error('GitHub API rate limit reached. Set GITHUB_TOKEN to raise the limit.')
+    if ((res.status === 403 || res.status === 429) && remaining === '0') {
+      throw new Error('GitHub API rate limit reached. Set a valid GITHUB_TOKEN to raise the limit (60 -> 5000/hr).')
+    }
+    if (res.status === 401) {
+      throw new Error('GitHub rejected the request (401). GITHUB_TOKEN is invalid or expired — rotate it, or clear it to use public access.')
     }
     if (res.status === 404) throw new Error(`GitHub resource not found: ${path}`)
     throw new Error(`GitHub API error ${res.status} for ${path}`)
