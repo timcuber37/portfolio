@@ -234,7 +234,8 @@ const experience = [
     "location": "New Haven, CT",
     "startDate": "Jan 2024",
     "endDate": "Dec 2025",
-    "bullets": "[\"Minor in Mathematics\"]",
+    "bullets": "[]",
+    "minor": "Minor in Mathematics",
     "type": "education",
     "visible": true,
     "order": 4

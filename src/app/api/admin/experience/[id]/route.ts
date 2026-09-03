@@ -22,6 +22,7 @@ export async function PUT(req: NextRequest, ctx: RouteContext<'/api/admin/experi
       endDate: data.endDate ?? null,
       bullets: JSON.stringify(data.bullets ?? []),
       gpa: data.gpa || null,
+      minor: data.minor || null,
       type: data.type ?? 'work',
       visible: data.visible ?? true,
     },

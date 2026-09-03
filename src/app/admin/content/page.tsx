@@ -35,6 +35,7 @@ interface Experience {
   endDate?: string | null
   bullets: string[]
   gpa?: string | null
+  minor?: string | null
   type: string
   visible: boolean
 }
@@ -94,6 +95,7 @@ type ExpDraft = {
   endDate: string
   bulletsText: string
   gpa: string
+  minor: string
   type: string
   visible: boolean
 }
@@ -151,6 +153,7 @@ const emptyExp: ExpDraft = {
   endDate: '',
   bulletsText: '',
   gpa: '',
+  minor: '',
   type: 'work',
   visible: true,
 }
@@ -369,6 +372,7 @@ export default function ContentEditor() {
       endDate: e.endDate ?? '',
       bulletsText: e.bullets.join('\n'),
       gpa: e.gpa ?? '',
+      minor: e.minor ?? '',
       type: e.type,
       visible: e.visible,
     })
@@ -384,6 +388,7 @@ export default function ContentEditor() {
       bullets: splitLines(expDraft.bulletsText),
       // Only education entries carry a GPA; clear it if the type changed away.
       gpa: expDraft.type === 'education' ? expDraft.gpa.trim() : '',
+      minor: expDraft.type === 'education' ? expDraft.minor.trim() : '',
       type: expDraft.type,
       visible: expDraft.visible,
     }
@@ -1309,9 +1314,14 @@ function ExpForm({
         </Field>
       </div>
       {draft.type === 'education' && (
-        <Field label="GPA (blank to hide)">
-          <input value={draft.gpa} onChange={(e) => setDraft((d) => ({ ...d, gpa: e.target.value }))} className={FORM_INPUT} placeholder="3.85 or 3.85 / 4.0" />
-        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="GPA (blank to hide)">
+            <input value={draft.gpa} onChange={(e) => setDraft((d) => ({ ...d, gpa: e.target.value }))} className={FORM_INPUT} placeholder="3.85 or 3.85 / 4.0" />
+          </Field>
+          <Field label="Minor (blank to hide)">
+            <input value={draft.minor} onChange={(e) => setDraft((d) => ({ ...d, minor: e.target.value }))} className={FORM_INPUT} placeholder="Minor in Mathematics" />
+          </Field>
+        </div>
       )}
       <Field label="Bullets (one per line)">
         <textarea rows={4} value={draft.bulletsText} onChange={(e) => setDraft((d) => ({ ...d, bulletsText: e.target.value }))} className={`${FORM_INPUT} resize-none`} />

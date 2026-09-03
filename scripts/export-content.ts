@@ -63,6 +63,7 @@ async function main() {
       endDate: e.endDate,
       bullets: JSON.parse(e.bullets) as string[],
       gpa: e.gpa,
+      minor: e.minor,
       type: e.type,
       visible: e.visible,
       order: e.order,

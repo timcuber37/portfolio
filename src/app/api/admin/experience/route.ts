@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
       endDate: data.endDate ?? null,
       bullets: JSON.stringify(data.bullets ?? []),
       gpa: data.gpa || null,
+      minor: data.minor || null,
       type: data.type ?? 'work',
       visible: data.visible ?? true,
       order: count,

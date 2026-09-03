@@ -87,10 +87,24 @@ function TimelineColumn({
             <p className="text-xs text-zinc-500 mt-0.5">
               {item.startDate} — {item.endDate ?? 'Present'} · {item.location}
             </p>
-            {item.gpa && (
-              <p className="text-xs text-zinc-600 mt-1">
-                <span className="font-medium text-zinc-700">GPA</span>{' '}
-                <span style={{ color }}>{item.gpa}</span>
+            {/* Degree metadata — deliberately a step larger and accent-coloured
+                so it reads ahead of the bullets below it. */}
+            {(item.gpa || item.minor) && (
+              <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-[13px]">
+                {item.gpa && (
+                  <span>
+                    <span className="font-medium text-zinc-700">GPA</span>{' '}
+                    <span className="font-semibold" style={{ color }}>
+                      {item.gpa}
+                    </span>
+                  </span>
+                )}
+                {item.gpa && item.minor && <span className="text-zinc-300">·</span>}
+                {item.minor && (
+                  <span className="font-semibold" style={{ color }}>
+                    {item.minor}
+                  </span>
+                )}
               </p>
             )}
             {item.bullets.length > 0 && (

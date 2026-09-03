@@ -45,6 +45,7 @@ export type ExperienceMinAggregateOutputType = {
   endDate: string | null
   bullets: string | null
   gpa: string | null
+  minor: string | null
   type: string | null
   visible: boolean | null
   order: number | null
@@ -59,6 +60,7 @@ export type ExperienceMaxAggregateOutputType = {
   endDate: string | null
   bullets: string | null
   gpa: string | null
+  minor: string | null
   type: string | null
   visible: boolean | null
   order: number | null
@@ -73,6 +75,7 @@ export type ExperienceCountAggregateOutputType = {
   endDate: number
   bullets: number
   gpa: number
+  minor: number
   type: number
   visible: number
   order: number
@@ -99,6 +102,7 @@ export type ExperienceMinAggregateInputType = {
   endDate?: true
   bullets?: true
   gpa?: true
+  minor?: true
   type?: true
   visible?: true
   order?: true
@@ -113,6 +117,7 @@ export type ExperienceMaxAggregateInputType = {
   endDate?: true
   bullets?: true
   gpa?: true
+  minor?: true
   type?: true
   visible?: true
   order?: true
@@ -127,6 +132,7 @@ export type ExperienceCountAggregateInputType = {
   endDate?: true
   bullets?: true
   gpa?: true
+  minor?: true
   type?: true
   visible?: true
   order?: true
@@ -228,6 +234,7 @@ export type ExperienceGroupByOutputType = {
   endDate: string | null
   bullets: string
   gpa: string | null
+  minor: string | null
   type: string
   visible: boolean
   order: number
@@ -265,6 +272,7 @@ export type ExperienceWhereInput = {
   endDate?: Prisma.StringNullableFilter<"Experience"> | string | null
   bullets?: Prisma.StringFilter<"Experience"> | string
   gpa?: Prisma.StringNullableFilter<"Experience"> | string | null
+  minor?: Prisma.StringNullableFilter<"Experience"> | string | null
   type?: Prisma.StringFilter<"Experience"> | string
   visible?: Prisma.BoolFilter<"Experience"> | boolean
   order?: Prisma.IntFilter<"Experience"> | number
@@ -279,6 +287,7 @@ export type ExperienceOrderByWithRelationInput = {
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   bullets?: Prisma.SortOrder
   gpa?: Prisma.SortOrderInput | Prisma.SortOrder
+  minor?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   visible?: Prisma.SortOrder
   order?: Prisma.SortOrder
@@ -296,6 +305,7 @@ export type ExperienceWhereUniqueInput = Prisma.AtLeast<{
   endDate?: Prisma.StringNullableFilter<"Experience"> | string | null
   bullets?: Prisma.StringFilter<"Experience"> | string
   gpa?: Prisma.StringNullableFilter<"Experience"> | string | null
+  minor?: Prisma.StringNullableFilter<"Experience"> | string | null
   type?: Prisma.StringFilter<"Experience"> | string
   visible?: Prisma.BoolFilter<"Experience"> | boolean
   order?: Prisma.IntFilter<"Experience"> | number
@@ -310,6 +320,7 @@ export type ExperienceOrderByWithAggregationInput = {
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   bullets?: Prisma.SortOrder
   gpa?: Prisma.SortOrderInput | Prisma.SortOrder
+  minor?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   visible?: Prisma.SortOrder
   order?: Prisma.SortOrder
@@ -332,6 +343,7 @@ export type ExperienceScalarWhereWithAggregatesInput = {
   endDate?: Prisma.StringNullableWithAggregatesFilter<"Experience"> | string | null
   bullets?: Prisma.StringWithAggregatesFilter<"Experience"> | string
   gpa?: Prisma.StringNullableWithAggregatesFilter<"Experience"> | string | null
+  minor?: Prisma.StringNullableWithAggregatesFilter<"Experience"> | string | null
   type?: Prisma.StringWithAggregatesFilter<"Experience"> | string
   visible?: Prisma.BoolWithAggregatesFilter<"Experience"> | boolean
   order?: Prisma.IntWithAggregatesFilter<"Experience"> | number
@@ -345,6 +357,7 @@ export type ExperienceCreateInput = {
   endDate?: string | null
   bullets: string
   gpa?: string | null
+  minor?: string | null
   type: string
   visible?: boolean
   order?: number
@@ -359,6 +372,7 @@ export type ExperienceUncheckedCreateInput = {
   endDate?: string | null
   bullets: string
   gpa?: string | null
+  minor?: string | null
   type: string
   visible?: boolean
   order?: number
@@ -372,6 +386,7 @@ export type ExperienceUpdateInput = {
   endDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bullets?: Prisma.StringFieldUpdateOperationsInput | string
   gpa?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.StringFieldUpdateOperationsInput | string
   visible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -386,6 +401,7 @@ export type ExperienceUncheckedUpdateInput = {
   endDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bullets?: Prisma.StringFieldUpdateOperationsInput | string
   gpa?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.StringFieldUpdateOperationsInput | string
   visible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -400,6 +416,7 @@ export type ExperienceCreateManyInput = {
   endDate?: string | null
   bullets: string
   gpa?: string | null
+  minor?: string | null
   type: string
   visible?: boolean
   order?: number
@@ -413,6 +430,7 @@ export type ExperienceUpdateManyMutationInput = {
   endDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bullets?: Prisma.StringFieldUpdateOperationsInput | string
   gpa?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.StringFieldUpdateOperationsInput | string
   visible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -427,6 +445,7 @@ export type ExperienceUncheckedUpdateManyInput = {
   endDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bullets?: Prisma.StringFieldUpdateOperationsInput | string
   gpa?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.StringFieldUpdateOperationsInput | string
   visible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -441,6 +460,7 @@ export type ExperienceCountOrderByAggregateInput = {
   endDate?: Prisma.SortOrder
   bullets?: Prisma.SortOrder
   gpa?: Prisma.SortOrder
+  minor?: Prisma.SortOrder
   type?: Prisma.SortOrder
   visible?: Prisma.SortOrder
   order?: Prisma.SortOrder
@@ -460,6 +480,7 @@ export type ExperienceMaxOrderByAggregateInput = {
   endDate?: Prisma.SortOrder
   bullets?: Prisma.SortOrder
   gpa?: Prisma.SortOrder
+  minor?: Prisma.SortOrder
   type?: Prisma.SortOrder
   visible?: Prisma.SortOrder
   order?: Prisma.SortOrder
@@ -474,6 +495,7 @@ export type ExperienceMinOrderByAggregateInput = {
   endDate?: Prisma.SortOrder
   bullets?: Prisma.SortOrder
   gpa?: Prisma.SortOrder
+  minor?: Prisma.SortOrder
   type?: Prisma.SortOrder
   visible?: Prisma.SortOrder
   order?: Prisma.SortOrder
@@ -495,6 +517,7 @@ export type ExperienceSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   endDate?: boolean
   bullets?: boolean
   gpa?: boolean
+  minor?: boolean
   type?: boolean
   visible?: boolean
   order?: boolean
@@ -509,6 +532,7 @@ export type ExperienceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   endDate?: boolean
   bullets?: boolean
   gpa?: boolean
+  minor?: boolean
   type?: boolean
   visible?: boolean
   order?: boolean
@@ -523,6 +547,7 @@ export type ExperienceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   endDate?: boolean
   bullets?: boolean
   gpa?: boolean
+  minor?: boolean
   type?: boolean
   visible?: boolean
   order?: boolean
@@ -537,12 +562,13 @@ export type ExperienceSelectScalar = {
   endDate?: boolean
   bullets?: boolean
   gpa?: boolean
+  minor?: boolean
   type?: boolean
   visible?: boolean
   order?: boolean
 }
 
-export type ExperienceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "company" | "location" | "startDate" | "endDate" | "bullets" | "gpa" | "type" | "visible" | "order", ExtArgs["result"]["experience"]>
+export type ExperienceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "company" | "location" | "startDate" | "endDate" | "bullets" | "gpa" | "minor" | "type" | "visible" | "order", ExtArgs["result"]["experience"]>
 
 export type $ExperiencePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Experience"
@@ -560,6 +586,11 @@ export type $ExperiencePayload<ExtArgs extends runtime.Types.Extensions.Internal
      * best. Only meaningful on education entries; blank hides it.
      */
     gpa: string | null
+    /**
+     * Rendered verbatim beside the GPA, so it carries its own wording
+     * ("Minor in Mathematics"). Education entries only; blank hides it.
+     */
+    minor: string | null
     type: string
     visible: boolean
     order: number
@@ -994,6 +1025,7 @@ export interface ExperienceFieldRefs {
   readonly endDate: Prisma.FieldRef<"Experience", 'String'>
   readonly bullets: Prisma.FieldRef<"Experience", 'String'>
   readonly gpa: Prisma.FieldRef<"Experience", 'String'>
+  readonly minor: Prisma.FieldRef<"Experience", 'String'>
   readonly type: Prisma.FieldRef<"Experience", 'String'>
   readonly visible: Prisma.FieldRef<"Experience", 'Boolean'>
   readonly order: Prisma.FieldRef<"Experience", 'Int'>
