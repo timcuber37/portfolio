@@ -21,6 +21,7 @@ export async function PUT(req: NextRequest, ctx: RouteContext<'/api/admin/experi
       startDate: data.startDate,
       endDate: data.endDate ?? null,
       bullets: JSON.stringify(data.bullets ?? []),
+      gpa: data.gpa || null,
       type: data.type ?? 'work',
       visible: data.visible ?? true,
     },

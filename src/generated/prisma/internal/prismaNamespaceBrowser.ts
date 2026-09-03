@@ -116,6 +116,7 @@ export const ExperienceScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   bullets: 'bullets',
+  gpa: 'gpa',
   type: 'type',
   visible: 'visible',
   order: 'order'

@@ -87,14 +87,35 @@ function TimelineColumn({
             <p className="text-xs text-zinc-500 mt-0.5">
               {item.startDate} — {item.endDate ?? 'Present'} · {item.location}
             </p>
+            {item.gpa && (
+              <p className="text-xs text-zinc-600 mt-1">
+                <span className="font-medium text-zinc-700">GPA</span>{' '}
+                <span style={{ color }}>{item.gpa}</span>
+              </p>
+            )}
             {item.bullets.length > 0 && (
               <ul className="mt-2 space-y-1">
-                {item.bullets.map((b, j) => (
-                  <li key={j} className="text-xs text-zinc-600 leading-relaxed flex items-start gap-2">
-                    <span className="mt-1.5 w-1 h-1 rounded-full bg-zinc-300 shrink-0" />
-                    {b}
-                  </li>
-                ))}
+                {item.bullets.map((b, j) =>
+                  // A bullet ending in ':' introduces the lines under it
+                  // ("Relevant Coursework:"), so it renders as a flush label
+                  // with no marker of its own.
+                  b.trimEnd().endsWith(':') ? (
+                    <li
+                      key={j}
+                      className="text-xs font-medium text-zinc-700 leading-relaxed pt-1 first:pt-0"
+                    >
+                      {b}
+                    </li>
+                  ) : (
+                    <li
+                      key={j}
+                      className="text-xs text-zinc-600 leading-relaxed flex items-start gap-2"
+                    >
+                      <span className="mt-1.5 w-1 h-1 rounded-full bg-zinc-300 shrink-0" />
+                      {b}
+                    </li>
+                  )
+                )}
               </ul>
             )}
           </motion.div>

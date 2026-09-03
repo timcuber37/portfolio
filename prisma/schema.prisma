@@ -44,6 +44,9 @@ model Experience {
   startDate String
   endDate   String?
   bullets   String
+  /// Free text ("3.85", "3.85 / 4.0") so it can be formatted however it reads
+  /// best. Only meaningful on education entries; blank hides it.
+  gpa       String?
   type      String
   visible   Boolean @default(true)
   order     Int     @default(0)
