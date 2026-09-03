@@ -1,7 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Trash2, Eye, EyeOff, Save, Download, X, Plus, ChevronUp, ChevronDown } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Trash2, Eye, EyeOff, Save, Download, X, Plus, ChevronUp, ChevronDown, Upload } from 'lucide-react'
+import { upload } from '@vercel/blob/client'
+import {
+  toMedia,
+  isBlobUrl,
+  firstFrame,
+  youtubePoster,
+  MAX_UPLOAD_BYTES,
+  UPLOAD_CONTENT_TYPES,
+} from '@/lib/media'
 
 interface Project {
   id: number
@@ -73,7 +82,7 @@ type ProjectDraft = {
   githubUrl: string
   liveUrl: string
   visible: boolean
-  screenshots: string[]
+  media: string[]
 }
 
 type ExpDraft = {
@@ -129,7 +138,7 @@ const emptyProject: ProjectDraft = {
   githubUrl: '',
   liveUrl: '',
   visible: true,
-  screenshots: [],
+  media: [],
 }
 
 const emptyExp: ExpDraft = {
@@ -287,7 +296,7 @@ export default function ContentEditor() {
       githubUrl: p.githubUrl ?? '',
       liveUrl: p.liveUrl ?? '',
       visible: p.visible,
-      screenshots: p.screenshots,
+      media: p.screenshots,
     })
   }
 
@@ -302,7 +311,7 @@ export default function ContentEditor() {
       githubUrl: projectDraft.githubUrl.trim() || null,
       liveUrl: projectDraft.liveUrl.trim() || null,
       visible: projectDraft.visible,
-      screenshots: projectDraft.screenshots,
+      screenshots: projectDraft.media,
     }
     const isNew = editProjectId === 'new'
     const res = await fetch(isNew ? '/api/admin/projects' : `/api/admin/projects/${editProjectId}`, {
@@ -947,6 +956,248 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   )
 }
 
+const asMB = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)}MB`
+
+// Where a media entry lives, which decides whether we may delete the file itself.
+function originOf(src: string) {
+  if (isBlobUrl(src)) return { label: 'uploaded', deletable: true }
+  if (toMedia(src).kind === 'youtube') return { label: 'YouTube', deletable: false }
+  return { label: 'public/', deletable: false }
+}
+
+function MediaManager({
+  media,
+  setMedia,
+}: {
+  media: string[]
+  setMedia: (next: (current: string[]) => string[]) => void
+}) {
+  const fileInput = useRef<HTMLInputElement>(null)
+  const [urlText, setUrlText] = useState('')
+  const [progress, setProgress] = useState<Record<string, number>>({})
+  const [error, setError] = useState<string | null>(null)
+  const busy = Object.keys(progress).length > 0
+
+  const move = (i: number, dir: number) =>
+    setMedia((cur) => {
+      const j = i + dir
+      if (j < 0 || j >= cur.length) return cur
+      const next = [...cur]
+      ;[next[i], next[j]] = [next[j], next[i]]
+      return next
+    })
+
+  const remove = async (i: number) => {
+    const src = media[i]
+    // An upload is ours to delete; a committed file or a YouTube link is only unlinked.
+    if (originOf(src).deletable) {
+      const alsoDelete = confirm(
+        'Delete the uploaded file from Blob storage too?\n\n' +
+          'OK — remove it here and delete the file permanently.\n' +
+          'Cancel — remove it here only; the file stays in storage.'
+      )
+      if (alsoDelete) {
+        const res = await fetch('/api/admin/media', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: src }),
+        })
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}))
+          setError(body.error ?? 'Could not delete the file from storage.')
+          return
+        }
+      }
+    }
+    setMedia((cur) => cur.filter((_, k) => k !== i))
+  }
+
+  const addUrls = () => {
+    const entries = splitLines(urlText)
+    if (!entries.length) return
+    setMedia((cur) => [...cur, ...entries.filter((e) => !cur.includes(e))])
+    setUrlText('')
+  }
+
+  const onFiles = async (files: FileList | null) => {
+    if (!files?.length) return
+    setError(null)
+    for (const file of Array.from(files)) {
+      if (!UPLOAD_CONTENT_TYPES.includes(file.type)) {
+        setError(`${file.name}: ${file.type || 'unknown type'} is not an accepted image or video.`)
+        continue
+      }
+      if (file.size > MAX_UPLOAD_BYTES) {
+        setError(`${file.name} is ${asMB(file.size)} — over the ${asMB(MAX_UPLOAD_BYTES)} limit.`)
+        continue
+      }
+      try {
+        setProgress((p) => ({ ...p, [file.name]: 0 }))
+        const blob = await upload(`projects/${file.name}`, file, {
+          access: 'public',
+          handleUploadUrl: '/api/admin/media/upload',
+          // Big files get split into parts uploaded in parallel and retried
+          // individually; below this the extra round trips aren't worth it.
+          multipart: file.size > 5 * 1024 * 1024,
+          onUploadProgress: ({ percentage }) =>
+            setProgress((p) => ({ ...p, [file.name]: percentage })),
+        })
+        setMedia((cur) => [...cur, blob.url])
+      } catch (e) {
+        setError(`${file.name}: ${e instanceof Error ? e.message : 'upload failed'}`)
+      } finally {
+        setProgress((p) => {
+          const next = { ...p }
+          delete next[file.name]
+          return next
+        })
+      }
+    }
+    if (fileInput.current) fileInput.current.value = ''
+  }
+
+  return (
+    <div className="space-y-2">
+      {media.length > 0 && (
+        <ul className="space-y-1.5">
+          {media.map((src, i) => {
+            const item = toMedia(src)
+            const origin = originOf(src)
+            return (
+              <li
+                key={src}
+                className="flex items-center gap-2.5 p-1.5 bg-zinc-950 border border-zinc-800 rounded-md"
+              >
+                <div className="relative w-16 aspect-video shrink-0 overflow-hidden rounded bg-zinc-900">
+                  {item.kind === 'video' ? (
+                    <video
+                      src={firstFrame(item.src)}
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={item.kind === 'youtube' ? youtubePoster(item.id) : item.src}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    {i === 0 && (
+                      <span className="px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 text-[10px] font-medium">
+                        thumbnail
+                      </span>
+                    )}
+                    <span className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 text-[10px]">
+                      {item.kind === 'youtube' ? 'video' : item.kind} · {origin.label}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-[11px] text-zinc-500 font-mono truncate" title={src}>
+                    {src}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => move(i, -1)}
+                    disabled={i === 0}
+                    aria-label="Move up"
+                    className="p-1 text-zinc-500 hover:text-white disabled:opacity-25 disabled:hover:text-zinc-500 transition-colors"
+                  >
+                    <ChevronUp size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => move(i, 1)}
+                    disabled={i === media.length - 1}
+                    aria-label="Move down"
+                    className="p-1 text-zinc-500 hover:text-white disabled:opacity-25 disabled:hover:text-zinc-500 transition-colors"
+                  >
+                    <ChevronDown size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => remove(i)}
+                    aria-label="Remove"
+                    className="p-1 text-zinc-500 hover:text-red-400 transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+
+      {Object.entries(progress).map(([name, pct]) => (
+        <div key={name} className="flex items-center gap-2 text-[11px] text-zinc-500">
+          <div className="h-1 flex-1 rounded-full bg-zinc-800 overflow-hidden">
+            <div className="h-full bg-blue-500 transition-all" style={{ width: `${pct}%` }} />
+          </div>
+          <span className="font-mono shrink-0">
+            {name} {Math.round(pct)}%
+          </span>
+        </div>
+      ))}
+
+      {error && <p className="text-xs text-red-400">{error}</p>}
+
+      <div className="flex items-center gap-2">
+        <input
+          ref={fileInput}
+          type="file"
+          multiple
+          accept={UPLOAD_CONTENT_TYPES.join(',')}
+          onChange={(e) => onFiles(e.target.files)}
+          className="hidden"
+        />
+        <button
+          type="button"
+          onClick={() => fileInput.current?.click()}
+          disabled={busy}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-white text-xs font-medium rounded-md transition-colors"
+        >
+          <Upload size={13} /> {busy ? 'Uploading…' : 'Upload files'}
+        </button>
+        <input
+          value={urlText}
+          onChange={(e) => setUrlText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              addUrls()
+            }
+          }}
+          placeholder="…or paste a YouTube URL / public path"
+          className={`${FORM_INPUT} flex-1 py-1.5 text-xs`}
+        />
+        <button
+          type="button"
+          onClick={addUrls}
+          disabled={!urlText.trim()}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-white text-xs font-medium rounded-md transition-colors"
+        >
+          <Plus size={13} /> Add
+        </button>
+      </div>
+
+      <p className="text-xs text-zinc-600">
+        Images and videos share one ordered list; the first entry is the card thumbnail. Uploads go
+        to Vercel Blob (max {asMB(MAX_UPLOAD_BYTES)} each) and are live as soon as you hit Save —
+        no redeploy. Nothing is written to the project until you Save.
+      </p>
+    </div>
+  )
+}
+
 function ProjectForm({
   draft,
   setDraft,
@@ -995,9 +1246,12 @@ function ProjectForm({
         <input type="checkbox" checked={draft.visible} onChange={(e) => setDraft((d) => ({ ...d, visible: e.target.checked }))} className="accent-blue-500" />
         Visible on site
       </label>
-      {draft.screenshots.length > 0 && (
-        <p className="text-xs text-zinc-600">Screenshots ({draft.screenshots.length}) are preserved. Manage them via the seed/files.</p>
-      )}
+      <Field label="Media (first entry is the card thumbnail)">
+        <MediaManager
+          media={draft.media}
+          setMedia={(next) => setDraft((d) => ({ ...d, media: next(d.media) }))}
+        />
+      </Field>
       <div className="flex items-center gap-3">
         <button onClick={onSave} disabled={!draft.title.trim()} className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-medium rounded-md transition-colors">
           <Save size={14} /> Save

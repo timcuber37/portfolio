@@ -1,15 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { ExternalLink, Calendar, Images, Maximize2 } from 'lucide-react'
+import { ExternalLink, Calendar, Images, Maximize2, Play } from 'lucide-react'
 import { GithubIcon } from './SocialIcons'
 import { SectionLabel } from './About'
 import Tilt from './Tilt'
 import ProjectModal from './ProjectModal'
 import { highlightText } from './HighlightedText'
 import { ink, accentAt } from '@/lib/theme'
+import {
+  toMediaList,
+  countMedia,
+  firstFrame,
+  posterFit,
+  youtubePoster,
+  type MediaItem,
+} from '@/lib/media'
 import type { ParsedProject } from '@/lib/data'
 
 export default function Projects({
@@ -89,14 +97,60 @@ export default function Projects({
   )
 }
 
+// One entry in the card's strip of media thumbnails. Videos show their first
+// frame with a play marker so the strip reads the same for either kind.
+function MediaThumb({ item }: { item: MediaItem }) {
+  return (
+    <div className="relative h-10 flex-1 overflow-hidden rounded ring-1 ring-zinc-200 bg-zinc-100">
+      {item.kind === 'video' ? (
+        <video
+          src={firstFrame(item.src)}
+          muted
+          playsInline
+          preload="metadata"
+          tabIndex={-1}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <Image
+          src={item.kind === 'youtube' ? youtubePoster(item.id) : item.src}
+          alt=""
+          fill
+          sizes="120px"
+          className={`object-cover ${posterFit(item)}`}
+        />
+      )}
+      {item.kind !== 'image' && (
+        <span className="absolute inset-0 flex items-center justify-center">
+          <Play size={12} className="text-white drop-shadow" fill="currentColor" />
+        </span>
+      )}
+    </div>
+  )
+}
+
 function ProjectCard({ project, index }: { project: ParsedProject; index: number }) {
   const accent = accentAt(index)
   // Map each tech keyword to a color so chips and highlighted words match.
   const techColor = new Map(project.tech.map((t, i) => [t.toLowerCase(), accentAt(i)]))
   const colorFor = (kw: string) => techColor.get(kw.toLowerCase()) ?? accent
 
-  const shots = project.screenshots
+  const media = toMediaList(project.screenshots)
+  const { images: imageCount, videos: videoCount } = countMedia(media)
+  const hero = media[0]
   const [modalOpen, setModalOpen] = useState(false)
+
+  // A self-hosted hero clip previews on hover. The handlers live on the media
+  // container rather than the <video> itself, because the "View details" overlay
+  // sits on top of it and would otherwise swallow the pointer.
+  const heroVideo = useRef<HTMLVideoElement>(null)
+  const previewHero = () => heroVideo.current?.play().catch(() => {})
+  const resetHero = () => {
+    const v = heroVideo.current
+    if (!v) return
+    v.pause()
+    v.currentTime = 0
+  }
 
   // Links inside the card shouldn't trigger the expand-on-click.
   const stop = (e: React.MouseEvent) => e.stopPropagation()
@@ -117,20 +171,58 @@ function ProjectCard({ project, index }: { project: ParsedProject; index: number
         className="group h-full w-full flex flex-col text-left bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:shadow-xl transition-shadow cursor-pointer"
         style={{ borderTop: `3px solid ${accent}` }}
       >
-        {shots.length > 0 && (
+        {hero && (
           <div className="mb-4">
-            <div className="relative w-full aspect-video overflow-hidden rounded-lg ring-1 ring-zinc-200">
-              <Image
-                src={shots[0]}
-                alt={`${project.title} screenshot`}
-                fill
-                sizes="(min-width: 640px) 45vw, 90vw"
-                className="object-cover object-top transition-transform duration-300 group-hover:scale-105"
-              />
-              <span className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-900/75 text-white text-[10px] font-medium">
-                <Images size={11} />
-                {shots.length}
+            <div
+              className="relative w-full aspect-video overflow-hidden rounded-lg ring-1 ring-zinc-200 bg-zinc-100"
+              onMouseEnter={previewHero}
+              onMouseLeave={resetHero}
+            >
+              {hero.kind === 'video' ? (
+                <video
+                  ref={heroVideo}
+                  src={firstFrame(hero.src)}
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label={`${project.title} demo video`}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              ) : (
+                <Image
+                  src={hero.kind === 'youtube' ? youtubePoster(hero.id) : hero.src}
+                  alt={`${project.title} ${hero.kind === 'youtube' ? 'video thumbnail' : 'screenshot'}`}
+                  fill
+                  sizes="(min-width: 640px) 45vw, 90vw"
+                  className={`object-cover ${posterFit(hero)} transition-transform duration-300 group-hover:scale-105`}
+                />
+              )}
+
+              <span className="absolute bottom-2 right-2 flex items-center gap-2 px-2 py-0.5 rounded-md bg-zinc-900/75 text-white text-[10px] font-medium">
+                {imageCount > 0 && (
+                  <span className="flex items-center gap-1">
+                    <Images size={11} />
+                    {imageCount}
+                  </span>
+                )}
+                {videoCount > 0 && (
+                  <span className="flex items-center gap-1">
+                    <Play size={11} />
+                    {videoCount}
+                  </span>
+                )}
               </span>
+
+              {/* Resting play glyph for a video hero; it yields to the hover overlay. */}
+              {hero.kind !== 'image' && (
+                <span className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity">
+                  <span className="flex items-center justify-center w-11 h-11 rounded-full bg-zinc-900/60 text-white shadow-lg">
+                    <Play size={18} className="translate-x-[1px]" fill="currentColor" />
+                  </span>
+                </span>
+              )}
+
               <span className="absolute inset-0 flex items-center justify-center bg-zinc-900/0 group-hover:bg-zinc-900/25 transition-colors">
                 <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 text-zinc-800 text-xs font-medium opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all shadow-md">
                   <Maximize2 size={13} /> View details
@@ -138,15 +230,10 @@ function ProjectCard({ project, index }: { project: ParsedProject; index: number
               </span>
             </div>
 
-            {shots.length > 1 && (
+            {media.length > 1 && (
               <div className="flex gap-1.5 mt-1.5">
-                {shots.map((src, i) => (
-                  <div
-                    key={src}
-                    className="relative h-10 flex-1 overflow-hidden rounded ring-1 ring-zinc-200"
-                  >
-                    <Image src={src} alt="" fill sizes="120px" className="object-cover object-top" />
-                  </div>
+                {media.map((item) => (
+                  <MediaThumb key={item.src} item={item} />
                 ))}
               </div>
             )}

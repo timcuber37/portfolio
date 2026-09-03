@@ -11,3 +11,7 @@
 *.ico binary
 *.pdf binary
 *.db binary
+*.mp4 binary
+*.webm binary
+*.mov binary
+*.m4v binary

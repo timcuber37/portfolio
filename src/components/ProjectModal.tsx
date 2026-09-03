@@ -4,12 +4,13 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Calendar, ExternalLink, ZoomIn } from 'lucide-react'
+import { X, Calendar, ExternalLink, ZoomIn, Maximize2 } from 'lucide-react'
 import { GithubIcon } from './SocialIcons'
 import Lightbox from './Lightbox'
 import { highlightText } from './HighlightedText'
 import { accentAt } from '@/lib/theme'
 import { useBodyScrollLock } from '@/lib/useBodyScrollLock'
+import { toMediaList, mediaLabel, youtubeEmbed } from '@/lib/media'
 import type { ParsedProject } from '@/lib/data'
 
 export default function ProjectModal({
@@ -23,7 +24,7 @@ export default function ProjectModal({
   open: boolean
   onClose: () => void
 }) {
-  const shots = project.screenshots
+  const media = toMediaList(project.screenshots)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   const techColor = new Map(project.tech.map((t, i) => [t.toLowerCase(), accentAt(i)]))
@@ -104,29 +105,67 @@ export default function ProjectModal({
                   )}
                 </div>
 
-                {/* Screenshots */}
-                {shots.length > 0 && (
+                {/* Media — images open the lightbox on click; players stay inline
+                    and get an explicit expand button, so their own controls work. */}
+                {media.length > 0 && (
                   <div className="mt-6 space-y-3">
-                    {shots.map((src, i) => (
-                      <button
-                        key={src}
-                        type="button"
-                        onClick={() => setLightboxIndex(i)}
-                        className="group relative block w-full overflow-hidden rounded-lg ring-1 ring-zinc-200 cursor-zoom-in"
-                      >
-                        <img
-                          src={src}
-                          alt={`${project.title} screenshot ${i + 1}`}
-                          className="w-full h-auto"
-                        />
-                        <span className="absolute inset-0 flex items-center justify-center bg-zinc-900/0 group-hover:bg-zinc-900/20 transition-colors">
-                          <ZoomIn
-                            size={26}
-                            className="text-white opacity-0 group-hover:opacity-100 drop-shadow transition-opacity"
+                    {media.map((item, i) =>
+                      item.kind === 'image' ? (
+                        <button
+                          key={item.src}
+                          type="button"
+                          onClick={() => setLightboxIndex(i)}
+                          className="group relative block w-full overflow-hidden rounded-lg ring-1 ring-zinc-200 cursor-zoom-in"
+                        >
+                          <img
+                            src={item.src}
+                            alt={mediaLabel(item, project.title, i)}
+                            className="w-full h-auto"
                           />
-                        </span>
-                      </button>
-                    ))}
+                          <span className="absolute inset-0 flex items-center justify-center bg-zinc-900/0 group-hover:bg-zinc-900/20 transition-colors">
+                            <ZoomIn
+                              size={26}
+                              className="text-white opacity-0 group-hover:opacity-100 drop-shadow transition-opacity"
+                            />
+                          </span>
+                        </button>
+                      ) : (
+                        <div
+                          key={item.src}
+                          className="relative w-full overflow-hidden rounded-lg ring-1 ring-zinc-200 bg-black"
+                        >
+                          {item.kind === 'video' ? (
+                            <video
+                              src={item.src}
+                              controls
+                              playsInline
+                              preload="metadata"
+                              aria-label={mediaLabel(item, project.title, i)}
+                              className="w-full h-auto block"
+                            >
+                              Your browser does not support the video tag.
+                            </video>
+                          ) : (
+                            <iframe
+                              src={youtubeEmbed(item.id)}
+                              title={mediaLabel(item, project.title, i)}
+                              loading="lazy"
+                              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              className="w-full aspect-video block"
+                            />
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setLightboxIndex(i)}
+                            aria-label={`Expand ${mediaLabel(item, project.title, i)}`}
+                            className="absolute top-2 right-2 p-1.5 rounded-md bg-zinc-900/70 text-white hover:bg-zinc-900/90 transition-colors"
+                          >
+                            <Maximize2 size={14} />
+                          </button>
+                        </div>
+                      )
+                    )}
                   </div>
                 )}
 
@@ -175,7 +214,7 @@ export default function ProjectModal({
       </AnimatePresence>
 
       <Lightbox
-        images={shots}
+        items={media}
         index={lightboxIndex}
         title={project.title}
         onClose={() => setLightboxIndex(null)}

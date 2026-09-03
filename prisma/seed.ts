@@ -3,10 +3,13 @@ import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { PrismaClient } from '../src/generated/prisma/client'
 
 // Regenerated from PRODUCTION data via scripts/export-content.ts.
-// Two edits applied on top of the prod snapshot:
+// Three edits applied on top of the prod snapshot:
 //   1. MyndHaven experience moved to lead the Work column (order 0).
 //   2. bio updated to mention the current MyndHaven internship.
+//   3. Cubing Companion added at order 0, pushing the other projects down one.
 // Array columns (tech/bullets/screenshots) are stored as JSON strings.
+// `screenshots` is the project media list: images, self-hosted video files, and
+// YouTube URLs in one array — see src/lib/media.ts for how each kind is detected.
 
 // Load env like Next.js: real shell env wins, then .env.local, then .env.
 config({ path: '.env.local' })
@@ -114,17 +117,30 @@ const settings = [
 
 const projects = [
   {
+    "title": "Cubing Companion",
+    "description": "A speedcubing analysis app that syncs a Bluetooth smart cube over Web Bluetooth, segments each solve into CFOP phases, and diffs every decision against a PyTorch imitation-learning ranker trained on 9,865 world-class competition solves and served in-browser with ONNX Runtime Web.",
+    "tech": "[\"TypeScript\",\"Python\",\"PyTorch\",\"ONNX Runtime Web\",\"Next.js\",\"React\",\"Web Bluetooth\",\"Web Workers\",\"IndexedDB\",\"Tailwind CSS\",\"Vitest\",\"GitHub Actions\"]",
+    "bullets": "[\"Trained a PyTorch listwise ranking model on 15,607 decision points mined from 9,865 reconstructed competition solves that predicts which F2L pair a world-class solver fills next with 69.5% accuracy against a 58.7% fewest-moves baseline, held out by solver so no per-solver habit could leak.\",\"Deployed the trained models to the browser via ONNX Runtime Web in a Web Worker for zero-cost, offline-capable inference, with a self-test page that re-scores held-out fixtures through the shipped loader to catch feature-order drift between training and serving.\",\"Built a rate-limited, resumable crawler and parsing pipeline that turned 13,087 scraped community solve reconstructions into a corpus of 9,865 engine-verified CFOP solves, rejecting 2,910 by solving method or event and 164 whose moves provably do not solve the cube.\",\"Implemented the candidate enumerators the model trains against: an exhaustive BFS over all 190,080 cross positions giving exact optimal distances, and an IDA* search for pair insertion under a max-of-admissible-lower-bounds heuristic, validated against 7,725 real crosses and 1,482 real insertions with zero violations.\",\"Built a state-predicate segmenter that splits a solve into CFOP phases for any cross color, achieving 97.1% agreement with 5,475 human-labelled reconstructions and validated independently by reproducing the corpus's xcross rate to within 1.6 points from a completely different signal.\",\"Integrated a GAN Bluetooth smart cube over Web Bluetooth, recovering per-move timing from a lossy, batched BLE stream by least-squares fitting the cube's clock onto the host's, with a test pinning the fit as two orders of magnitude better than a fixed offset over 100 moves at 2% clock skew.\",\"Built the differentiating feature on top of the ranker: at each decision point it compares the user's choice against the model's and explains the gap by counterfactual attribution, substituting one feature value at a time and re-scoring to find which difference actually moved the decision.\",\"Architected a 9-package TypeScript monorepo around one rule (analysis code may never import the hardware adapter) so the smart cube is one input among several and the entire 543-test suite runs in CI in under 4 seconds with no hardware.\"]",
+    "screenshots": "[]",
+    "startDate": "Aug 2026",
+    "endDate": null,
+    "githubUrl": "https://github.com/timcuber37/cubing-companion",
+    "liveUrl": null,
+    "visible": true,
+    "order": 0
+  },
+  {
     "title": "TCG-Tracker",
     "description": "A TCG collection manager built on a CQRS architecture with a distributed Java/Spring Boot backend, real-time TCGPlayer price enrichment, and event-driven Kafka consumers projecting into denormalized Cassandra read models.",
     "tech": "[\"Java\",\"Spring Boot\",\"React\",\"TypeScript\",\"MySQL\",\"Cassandra\",\"PostgreSQL\",\"Kafka\",\"Supabase\",\"Docker\",\"nginx\",\"CQRS\"]",
     "bullets": "[\"Architected a TCG collection manager on a CQRS design with Java 23 / Spring Boot 4, separating writes (MySQL/JPA) from reads (Apache Cassandra) via an Apache Kafka event bus across web, consumer, and sync roles.\",\"Built a stateless REST API secured as an OAuth2 resource server, validating Supabase-issued ES256 JWTs against a JWKS endpoint so the React client authenticates directly with zero password handling server-side.\",\"Engineered a three-datasource Spring backend — MySQL (JPA), Supabase PostgreSQL (JdbcTemplate catalog search over 7K+ cards), and Cassandra (Spring Data) — coexisting in one application context.\",\"Developed a React 19 + TypeScript (Vite) SPA with client-side Supabase auth, paginated search, live-priced collection management, and a reusable component architecture consuming the typed API.\",\"Implemented event-driven projection with a Spring @KafkaListener consumer materializing collection_by_user read models, keeping JSON event schemas wire-compatible across a Python→Java migration.\",\"Integrated a rate-limited PokéWallet client (RestClient) for live TCGPlayer pricing and image proxying with disk caching, plus a @Scheduled daily catalog sync respecting a 100 req/hour free-tier budget.\",\"Containerized the full stack with Docker Compose — one Spring image run as three profile-driven services behind an nginx-served SPA — provisioning MySQL, Cassandra, and Kafka with health-gated startup ordering.\",\"Migrated a production Python/Flask app to Java/Spring + React across six verified phases, preserving the distributed architecture while adding type-safe REST contracts and a decoupled SPA frontend.\",\"Tested the CQRS core with Spock/Groovy and JUnit specs covering write-side persistence, event publishing, Kafka→Cassandra projection routing, and a @WebMvcTest slice asserting JWT-protected endpoint behavior.\",\"Instrumented the service with Micrometer → InfluxDB and Grafana, exposing command and projection counters plus price-fetch and catalog-search latency timers (p95) tagged by service role on a Docker-verified dashboard.\",\"Built a polyglot-persistence backend across MySQL (JPA), Supabase Postgres (catalog search over 7K+ cards), and Cassandra, using denormalized read models for JOIN-free, single-partition lookups.\"]",
-    "screenshots": "[\"/screenshots/pc1.png\",\"/screenshots/pc2.png\",\"/screenshots/pc3.png\"]",
+    "screenshots": "[\"/screenshots/pc1.png\",\"/screenshots/pc2.png\",\"/screenshots/pc3.png\",\"https://www.youtube.com/watch?v=FJ0DFkJ_M2o\",\"https://www.youtube.com/watch?v=p74vQ9VKnpg\"]",
     "startDate": "Mar 2026",
     "endDate": null,
     "githubUrl": "https://github.com/timcuber37/tcg-tracker",
     "liveUrl": null,
     "visible": true,
-    "order": 0
+    "order": 1
   },
   {
     "title": "SpeedCubeMuse",
@@ -137,7 +153,7 @@ const projects = [
     "githubUrl": null,
     "liveUrl": "https://speedcubemuse.fly.dev/",
     "visible": true,
-    "order": 1
+    "order": 2
   },
   {
     "title": "Developer Portfolio",
@@ -150,7 +166,7 @@ const projects = [
     "githubUrl": "https://github.com/timcuber37/portfolio",
     "liveUrl": "timothyyang.vercel.app",
     "visible": true,
-    "order": 2
+    "order": 3
   },
   {
     "title": "Black Hole Sim",
@@ -163,7 +179,7 @@ const projects = [
     "githubUrl": "https://github.com/Adrian1131/blackhole-sim-v2",
     "liveUrl": null,
     "visible": true,
-    "order": 3
+    "order": 4
   }
 ]
 

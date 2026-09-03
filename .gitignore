@@ -23,6 +23,17 @@
 # misc
 .DS_Store
 *.pem
+*.key
+*.p12
+*.pfx
+
+# editor / tooling
+.vscode/
+.idea/
+# Personal Claude Code skills (resume tailoring) — they read from the ignored
+# knowledge-base/, so committing them alone would leave dangling references.
+# Force-add with `git add -f` if a skill is ever worth sharing.
+.claude/
 
 # debug
 npm-debug.log*
@@ -53,8 +64,18 @@ next-env.d.ts
 *.db-wal
 *.db-shm
 
+# Snapshot of live site content written by scripts/export-content.ts. It is a
+# full dump of production copy, meant to be folded into prisma/seed.ts by hand
+# and then discarded — not committed on its own.
+db-export.json
+
 # personal job-application files (kept out of the repo / deploy)
 description.md
 cover-letter*.md
 public/resume.md
-resume_contributions.md
+# Case matters on Linux/CI checkouts; must match the file exactly.
+RESUME_CONTRIBUTIONS.md
+/resumes
+/cover-letters
+/planning
+/knowledge-base
