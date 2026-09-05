@@ -28,15 +28,15 @@ export default function About({ settings }: { settings: Record<string, string> }
         >
           <p>
             {settings.bio ??
-              "I'm a full stack software engineer and Computer Science graduate student at Southern Connecticut State University. I enjoy building real-world applications that solve meaningful problems."}
+              "I'm Tim, a software engineer and computer science graduate student at Southern Connecticut State University. I enjoy making complicated systems feel simple and building software that people can actually use."}
           </p>
           <p>
             {settings.aboutPara2 ??
-              'My experience spans cloud infrastructure, AI-powered tools, and high-performance graphics — from deploying containerized apps on Fly.io and AWS to engineering GLSL shaders for real-time black hole simulations.'}
+              'I like working across the whole product, from the database and API to the interface people use. I care less about collecting technologies than choosing the right one and making the pieces work well together.'}
           </p>
           <p>
             {settings.aboutPara3 ??
-              "Outside of code, I compete in Rubik's Cube events and am ranked in the top 100 in the United States for 3×3 average time through the World Cube Association."}
+              "The habit behind all of this came from speedcubing: spot what slowed me down, break it into smaller parts, and try again. I bring the same approach to software."}
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <a

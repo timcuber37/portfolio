@@ -9,10 +9,10 @@ import { ink } from '@/lib/theme'
 type Link = { label: string; href: string; icon: React.ReactNode }
 
 const CUBING_DESC =
-  'Ranked top 100 in the United States for 3×3 average through the World Cube Association. I compete at official events and share solves and tutorials on YouTube.'
+  "I've competed in official World Cube Association events since 2019 and currently rank in the top 100 in the U.S. for both 3×3 and Megaminx. I also share solves and tutorials on YouTube."
 const KOREAN_TITLE = 'Korean Club Co-Founder'
 const KOREAN_DESC =
-  'Co-founded and serve as Vice President of the SCSU Korean Club, organizing cultural events and building a welcoming community on campus.'
+  "I co-founded SCSU's Korean Club and serve as Vice President, helping organize cultural events and create a welcoming community on campus."
 const YOUTUBE_URL = 'https://www.youtube.com/@timcuber37'
 const WCA_URL = 'https://www.worldcubeassociation.org/persons/2019YANT03'
 
@@ -57,7 +57,7 @@ export default function Beyond({ settings }: { settings: Record<string, string> 
             {settings.beyondHeading ?? 'Life outside the editor'}
           </h2>
           <p className="text-zinc-600 text-sm mb-10 max-w-md">
-            {settings.beyondIntro ?? 'What I get up to when I’m not building software.'}
+            {settings.beyondIntro ?? 'A few things that matter to me away from software.'}
           </p>
         </motion.div>
 

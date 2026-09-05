@@ -969,6 +969,26 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 const asMB = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)}MB`
 
+// Blob's own messages are accurate but don't say what to change, and these two
+// are pure configuration — worth spelling out rather than making someone guess.
+function explainUploadError(e: unknown): string {
+  const message = e instanceof Error ? e.message : 'upload failed'
+  if (/private store|public access/i.test(message)) {
+    return (
+      'the Vercel Blob store is set to PRIVATE access, so uploads could never be shown ' +
+      'on the public site. Create a Blob store with public access and connect it to this ' +
+      'project (private blobs only read back through signed, expiring URLs).'
+    )
+  }
+  if (/No read-write token|BLOB_READ_WRITE_TOKEN/i.test(message)) {
+    return (
+      'no BLOB_READ_WRITE_TOKEN on the server. Connect a Blob store to the project on ' +
+      'Vercel, and redeploy — or add the token to .env.local when running locally.'
+    )
+  }
+  return message
+}
+
 // Where a media entry lives, which decides whether we may delete the file itself.
 function originOf(src: string) {
   if (isBlobUrl(src)) return { label: 'uploaded', deletable: true }
@@ -1055,7 +1075,7 @@ function MediaManager({
         })
         setMedia((cur) => [...cur, blob.url])
       } catch (e) {
-        setError(`${file.name}: ${e instanceof Error ? e.message : 'upload failed'}`)
+        setError(`${file.name}: ${explainUploadError(e)}`)
       } finally {
         setProgress((p) => {
           const next = { ...p }
